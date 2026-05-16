@@ -1,0 +1,684 @@
+/**
+ * PET Application Master Stylesheet
+ * 
+ * Uses @variable syntax for theme injection via color_palettes.py.
+
+ *  NOTES:
+
+    Replaces long ID lists. Requires .setProperty("action", "...") in Python.
+    This is good. Instead of setting Object Name and use ID here, I can set the obejct property and it works the same.
+
+ * PROPERTY REFERENCE:
+ * ----------------------------------------------------------------------------
+ * -- Properties --
+ * [nav="primary"]                          : Sidebar navigation buttons (Dashboard, Home, etc.)
+ * [action="search"]                        : Search input fields
+ * [action="clear"]                         : Clear/Cancel buttons for search bars
+ * [action="filter"]                        : Category filter dropdowns
+ * [action="delete"]                        : Red-styled destructive action buttons
+ * 
+ * -- Classes --
+ * [class="status-card"]                    : Dashboard "Next Client" card
+ * [class="info-card"]                      : General purpose info containers
+ * [class="kpi-card"]                       : Dashboard summary cards
+ * [class="insight-card"]                   : Dashboard mini-table containers
+ * [class="chart-card"]                     : Wrappers for QCharts
+ * [class="kpi-card-header"]                : Dashboard summary cards
+ * [class="kpi-title"]                      : KPI card titles
+ * [class="kpi-value"]                      : Large numerical values in KPI cards
+ * [class="insight-title"]                  : Titles for mini-tables
+ * [class="insight-table"]                  : Specialized gridless tables for insights
+ * [class="section-title"]                  : Large headers for dashboard sections
+ * [class="status-value"]                   : Highlighted text in status cards
+ * [class="timestamp-button-group"]         : Period selection buttons (D, W, M, Y, A)
+ * 
+ * -- Specific Object IDs --
+ * #dashboard_upcoming_appointments_table   : The main dashboard grid
+ * #dashboard_upcoming_appointments_title   : Header for the dashboard grid
+ * -- Specific Object IDs (use sparingly) --
+ * #sidemenu_small / _big                   : Sidebar containers
+ * #statusbar_widget                        : The top navigation/greeting bar
+ * #welcomeLabel                            : "Hello, User" text
+ * #stateLabel                              : "Good Morning" text
+ * #darkModeButton                          : Theme toggle button
+ * #accountButton                           : Profile/Logout toolbutton
+ * 
+ * -- States --
+ * [state="positive"]                       : Green-tinted (Growth, Success, Active)
+ * [state="negative"]                       : Red-tinted (Loss, Alert, Error)
+ * [state="warning"]                        : Orange-tinted (Low Stock, Pending)
+ * [state="neutral"]                        : Gray-tinted (Default, Muted)
+ * ----------------------------------------------------------------------------
+*/
+
+QWidget {
+    background-color: @bg_base;
+    color: @text_primary;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 11pt;
+}
+
+/* Tooltips */
+QToolTip {
+    background-color: @bg_surface;
+    color: @text_primary;
+    border: 1px solid @brand_500;
+    border-radius: 4px;
+    padding: 4px;
+}
+
+/* ============================================================================
+    Buttons
+   ============================================================================ */
+QPushButton {
+    background-color: @bg_surface;
+    color: @text_primary;
+    border: 1px solid @border;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-weight: 600;
+}
+
+QPushButton:hover {
+    background-color: @brand_500_a20;
+}
+
+QPushButton:pressed {
+    background-color: @brand_500;
+}
+
+QPushButton:checked {
+    background-color: @brand_500_hover;
+    color: #FFFFFF;
+    border: none;
+}
+
+QPushButton:checked:hover {
+    background-color: @brand_500_hover;
+}
+
+/* Remove the small arrow from QToolButtons (like Account/Profile) */
+QToolButton::menu-indicator { image: none; }
+
+/* ============================================================================
+    Inputs & Form Controls
+   ============================================================================ */
+QLabel {
+    background-color: transparent;
+    font-weight: bold;
+    color: @text_primary;
+}
+
+QLineEdit, QSpinBox, QDoubleSpinBox, QComboBox, QDateEdit, QDateTimeEdit {
+    background-color: @bg_surface;
+    border: 1px solid @border;
+    border-radius: 6px;
+    padding: 6px;
+    selection-background-color: @brand_500;
+}
+
+QLineEdit:focus, QSpinBox:focus, QDoubleSpinBox:focus, QComboBox:focus {
+    border: 1px solid @brand_500;
+    background-color: @bg_surface;
+}
+
+QDateTimeEdit::drop-down{
+    image: url("assets/Icons/down-arrow-ico.png");
+    width: 16px;
+}
+
+QComboBox::drop-down{
+    border-left: 1px solid @border;
+}
+QComboBox::down-arrow{
+    image: url("assets/Icons/down-arrow-ico.png");
+    width: 16px;
+}
+QComboBox::editable {
+    background-color: @bg_surface;
+}
+
+QComboBox QAbstractItemView {
+    background-color: @bg_surface;
+    border: 1px solid @border;
+    border-radius: 8px;
+    selection-background-color: @brand_500;
+    outline: none;
+}
+
+QComboBox QAbstractItemView::item {
+    min-height: 30px;
+    border-radius: 6px;
+    background-color: @bg_surface;
+    color: @text_primary;
+    margin: 1px;
+}
+QComboBox QAbstractItemView::item:hover {
+    background-color: @brand_500;
+    color: #FFFFFF;
+}
+
+QSpinBox::down-button, QDoubleSpinBox::down-button {
+    image: url("assets/Icons/down-arrow-ico.png");
+    width: 16px;
+}
+QSpinBox::up-button, QDoubleSpinBox::up-button {
+    image: url("assets/Icons/up-arrow-ico.png");
+    width: 16px;
+}
+
+QTextEdit {
+    background-color: @bg_surface;
+    border: 1px solid @border;
+    border-radius: 8px;
+    padding: 2px;
+}
+
+QCheckBox { color: @text_secondary; }
+
+QCheckBox::indicator {
+    width: 18px;
+    height: 18px;
+    border: 1px solid @border;
+    border-radius: 4px;
+    background: @bg_surface;
+}
+
+QCheckBox::indicator:checked {
+    background-color: @bg_surface;
+    image: url("assets/Icons/check-ico.png");
+}
+
+/* ============================================================================
+    Tables & Data Views
+   ============================================================================ */
+/* Table Headers*/
+QHeaderView::section {
+    background-color: @border;
+    color: @text_primary;
+    padding: 5px 2px 5px 8px;
+    border: 1px solid @border;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+/* Table Cells */
+QTableView {
+    background-color: @bg_surface;
+    gridline-color: @border;
+    border: 1px solid @border;
+    border-radius: 8px;
+    padding: 1px;
+    outline: none;
+    alternate-background-color: @bg_base; /* darker gray instead of white */
+}
+
+QTableView::item:hover {
+    background-color: @brand_500;
+    color: @bg_surface;
+    border-radius: 8px;
+}
+
+QTableView::item:selected {
+    background-color: @brand_500;
+    color: #FFFFFF;
+}
+
+QTableCornerButton::section {
+    background-color: @bg_surface;   /* match your table background */
+    border: 1px solid @border;       /* optional, keeps consistency */
+}
+
+/* ============================================================================
+    Tabs & Filter/Search Bars
+   ============================================================================ */
+/* Tab Page Frame */
+QTabWidget::pane {
+    border: 1px solid @border;
+    border-top: none;
+    background-color: @bg_base;
+    top: -1px;
+}
+/* Tab Bar Tabs*/
+
+QTabBar::tab {
+    background-color: @bg_surface;
+    color: @text_secondary;
+    border: 1px solid @border;
+    border-bottom: none;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    padding: 8px 10px;
+    margin-right: 2px;
+    margin-top: 5px;
+    font-size: 10pt;
+    font: bold;
+}
+
+QTabBar::tab:selected {
+    background-color: @brand_500;
+    color: #FFFFFF;
+    border: 1px solid @brand_500;
+    margin-top: 0px;
+    padding-bottom: 10px;
+}
+
+QTabBar::tab:hover:!selected {
+    background-color: @border;
+    color: @text_primary;
+}
+
+QTabBar:scroller {
+    width: 50px;
+}
+QTabBar QToolButton {
+    background-color: @bg_surface;
+    border: 1px solid @border;
+}
+
+/* --- Specialized Action Bar Widgets (Search/Sort/Filter) --- */
+
+QLineEdit[action="search"] {
+    background-color: @bg_surface;
+    border: 1px solid @border;
+    border-right: none;
+    border-radius: 0px;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    margin-left: 10px;
+    padding: 6px;
+    selection-background-color: @brand_500;
+}
+
+QPushButton[action="clear"] {
+    border: 1px solid @border;
+    border-left: none;
+    border-right: none;
+    border-radius: 0px;
+}
+
+QComboBox[action="filter"] {
+    background-color: @bg_surface;
+    border: 1px solid @border;
+    border-left: 1px solid @border; 
+    border-radius: 0px;
+    border-bottom-right-radius: 10px;
+    border-top-right-radius: 10px;
+    margin-right: 8px;
+    selection-background-color: @brand_500;
+}
+
+QComboBox[action="filter"]::drop-down { 
+    width: 30px;
+    border-right: 1px solid @border;
+    border-left: none;
+    subcontrol-origin: padding;
+    subcontrol-position: left;
+}
+
+QComboBox[action="filter"]::down-arrow { 
+    image: url("assets/Icons/filter-ico.png");
+    color: @text_primary;
+    width: 16px;
+    height: 16px;
+}
+
+QComboBox[action="filter"]::drop-down:hover { background-color: @border; }
+QComboBox[action="filter"]::drop-down:pressed { background-color: @brand_500; }
+
+/* Quick Purchase button */
+#quick_purchase_btn {
+    margin-left: 10px;
+}
+
+/* ============================================================================
+    Side Menu
+   ============================================================================ */
+
+#sidemenu_small, #sidemenu_big {background-color: @bg_base; border-right: 2px solid @border;}
+#side_menu_big_logo_container {margin-right: 2px;}
+QLabel[logo="primary"]{
+    padding: 4px;
+}
+#logo_text {
+    color: @text_primary;
+    font-size: 22pt;
+    font-family: 'Aldhabi', 'Segoe UI', sans-serif;
+    font-weight: bold;
+    margin: 0px 0px 0px 0px;
+    padding: 0px 0px 0px 0px;
+}
+/* Sidebar Navigation Buttons */
+QPushButton[nav="primary"] {
+    background-color: transparent;
+    border: none;
+    border-radius: 10px;
+    margin: 2px 5px 2px 0px;
+    text-align: left;
+    padding: 7px;
+    font-weight: bold;
+    font-size: 20pt;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Sidebar Navigation Buttons Font by Language */
+/* Important: selector matches the widget that owns the QPushButton.
+   app_language must be set on the sidebar container widgets at runtime. */
+QWidget[app_language="en"] QPushButton[nav="primary"] {
+    font-family: 'Aldhabi', 'Segoe UI', sans-serif;
+    font-size: 35pt;
+}
+
+QWidget[app_language="ar"] QPushButton[nav="primary"] {
+    font-family: 'Segoe UI', 'Tahoma', 'Arial', sans-serif;
+}
+
+
+QPushButton[nav="primary"]:hover {
+    background-color: @brand_500_a10;
+}
+
+QPushButton[nav="primary"]:checked {
+    background-color: @bg_surface;
+    color: @text_primary;
+}
+
+
+/* ============================================================================
+    Status Bar (Top Header)
+   ============================================================================ */
+#statusbar_widget {border-bottom: 2px solid @border; margin-bottom: 2px;}
+
+#menu_btn{
+    background-color: transparent;
+    border: none;
+}
+
+#menu_btn:hover{
+    background-color: @border;
+}
+
+#darkModeButton {
+    background-color: transparent;
+    border: none;
+}
+
+#darkModeButton:hover {
+    background-color: @border;
+    border-radius: 16px;
+}
+
+#welcomeLabel {
+    color: @state_info;
+    font-size: 14pt;
+    font-weight: bold;
+}
+
+#stateLabel {
+    color: @text_secondary;
+    font-style: italic;
+}
+
+#accountButton {
+    background-color: transparent;
+    border: none;
+}
+
+#accountButton:hover {
+    background-color: @border;
+    border-radius: 30px;
+}
+
+/* Account QMenu */
+QMenu::item {
+    padding: 6px 10px;
+    border-radius: 4px;
+}
+
+QMenu::item:selected {
+    background-color: @bg_base;
+}
+
+QMenu {
+    background-color: @bg_surface;
+    border: 1px solid @border;
+    border-radius: 8px;
+    padding: 4px;
+}
+
+
+/* ============================================================================
+    Dashboard Widgets & Cards
+   ============================================================================ */
+
+/* Dashboard Card Whole Widget */
+QFrame[class="status-card"],
+QFrame[class="kpi-card"],
+QFrame[class="insight-card"] {
+    background-color: @bg_surface;
+    border: 2px solid @border;
+    border-radius: 12px;
+    margin: 2px;
+}
+
+QFrame[class="info-card"],
+QFrame[class="chart-card"] {
+    background-color: @bg_surface;
+    border: 2px solid @border;
+    border-radius: 12px;
+}
+/* Dashboard Card Header */
+
+QWidget[class="info-card-header"],
+QWidget[class="chart-card-header"] {
+    background-color: @bg_surface;
+    border-bottom: 1px solid @border;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+
+QLabel[class="kpi-title"],
+QLabel[class="insight-title"],
+QLabel[class="info-card-title"],
+QLabel[class="chart-card-title"] {
+    background-color: transparent;
+    color: @text_primary;
+    font-weight: bold;
+    padding: 6px;
+}
+
+QLabel[class="insight-title"] {
+    border-bottom: 1px solid @border;
+}
+
+QLabel[class="info-card-value"],
+QLabel[class="kpi-value"] {
+    font-size: 22pt;
+    font-weight: bold;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
+/* Dashboard Sections Headers */
+QLabel[class="section-title"] {
+    background-color: @bg_surface;
+    color: @state_success;
+    border: 2px solid @border;
+    border-radius: 8px;
+    font-size: 22pt;
+    font-weight: bold;
+    margin: 0px;
+}
+
+/* KPI States */
+QLabel[state="positive"] {
+    background-color: @state_success_a10;
+    color: @state_success;
+}
+
+QLabel[state="negative"] {
+    background-color: @state_danger_a10;
+    color: @state_danger;
+}
+
+QLabel[state="warning"] {
+    background-color: @state_warning_a10;
+    color: @state_warning;
+}
+
+QLabel[state="neutral"] {
+    background-color: @bg_surface;
+    color: @text_secondary;
+}
+
+/* Insight Tables (Dashboard Mini Tables) */
+QTableWidget[class="insight-table"] {
+    background-color: transparent;
+    border: none;
+}
+/* Insight Table Headers */
+QTableWidget[class="insight-table"] QHeaderView::section {
+    background-color: @bg_surface;
+    border: none;
+    border-bottom: 1px solid @border;
+    color: @text_secondary;
+    font-size: 9pt;
+}
+
+
+/* Appointments table */
+#dashboard_upcoming_appointments_title{
+    background-color: @bg_surface;
+    border: 2px solid @border;
+    border-radius: 8px;
+    margin-top: 2px;
+}
+
+#dashboard_upcoming_appointments_table {
+    gridline-color: transparent;
+    background-color: @bg_surface;
+    border: 2px solid @border;
+    border-radius: 8px;
+    padding: 0px;
+    padding-bottom: 4px;
+}
+
+#dashboard_upcoming_appointments_table QHeaderView::section {
+    background-color: @border;
+    border: none;
+}
+
+#dashboard_upcoming_appointments_table QHeaderView{
+    background-color: @border;
+    border-bottom: 2px solid @border;
+    padding: 2px;
+}
+
+/* Next Client Card Dashboard Elements */
+QLabel[class="status-title"] { color: @text_primary; font-weight: bold; }
+QLabel[class="status-value"] { color: @state_success; font-weight: bold; font-size: 13pt; }
+
+/* ============================================================================
+    Charts & Cards Styling
+   ============================================================================ */
+/* The Whole Charts Widget */
+#dashboard_charts_widget {
+    background-color: transparent;
+}
+
+/* Chart In The Chart Card */
+QFrame[class="chart-card"] QChartView {
+    qproperty-textColor: @text_primary;
+}
+
+/* ============================================================================
+    Dialogs & Specialized Overlays
+   ============================================================================ */
+QDialog { background-color: @bg_base; }
+QMessageBox { background-color: @bg_surface; }
+
+QPushButton[action="delete"] {
+    color: @state_danger;
+    padding: 0px;
+    font-weight: bold;
+}
+
+QFrame[class="timestamp-button-group"] {
+    background-color: transparent;
+    border-radius: 8px;
+    margin-right: 6px;
+}
+
+QPushButton[class="timestamp-button-group"] {
+    background-color: transparent;
+    color: @text_secondary;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 9pt;
+    padding: 2px;
+}
+
+QPushButton[class="timestamp-button-group"]:checked {
+    background-color: @brand_500;
+    color: white;
+}
+
+QLabel[name="total-price"]{
+    font-size: 14px; 
+    color: @state_success; 
+    margin-left: 10px;
+}
+
+#copyright_label {
+    color: @text_secondary;
+    font-size: 11px;
+    margin-top: 15px;
+}
+
+/* ============================================================================
+    Scrollbar Styling
+   ============================================================================ */
+QScrollBar:vertical {
+    background: @bg_base;
+    border: 1px solid @border;
+    border-radius: 6px;
+    width: 12px;
+}
+
+QScrollBar:horizontal {
+    background: @bg_base;
+    border: 1px solid @border;
+    border-radius: 6px;
+    height: 12px;
+}
+
+QScrollBar::handle:vertical {
+    background: @border;
+    border-radius: 3px;
+    margin: 2px;
+}
+
+QScrollBar::handle:horizontal {
+    background: @border;
+    border-radius: 3px;
+    margin: 2px;
+}
+
+QScrollBar::handle:vertical:hover,
+QScrollBar::handle:horizontal:hover {
+    background: @brand_500;
+}
+
+QScrollBar::add-line:vertical,
+QScrollBar::sub-line:vertical,
+QScrollBar::add-line:horizontal,
+QScrollBar::sub-line:horizontal {
+    background: none;
+}
+
+QScrollBar::add-page:vertical,
+QScrollBar::sub-page:vertical,
+QScrollBar::add-page:horizontal,
+QScrollBar::sub-page:horizontal {
+    background: @bg_base;
+}
