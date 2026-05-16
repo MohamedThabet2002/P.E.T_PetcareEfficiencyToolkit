@@ -1,0 +1,18 @@
+Petcare Efficiency Toolkit (P.E.T) - What's new in this release
+================================================================
+
+1.1.0
+  - Full in-place upgrade path: existing v1.0.0 databases are archived and
+    migrated automatically, with no data loss.
+  - Reports center overhaul: a period bar with presets, a navigator calendar,
+    click-to-save report history (open / compare / export), and daily auto
+    checkpoints.
+  - RBAC: editable role templates and per-user permission overrides, with
+    custom roles and full permission catalog.
+  - Record-book clinical exam (9 tables) in the Add Visit wizard.
+  - Undo/restore for deleted owners, pets, visits and appointments.
+  - Excel / CSV import & export plus templates from Settings > Database Backup.
+  - Stock batches with expiry date, buy price and per-batch receipt linking.
+  - Built-in backup encryption, audit trail on every add / edit / delete.
+  - New installer: bilingual (English / Arabic), branded artwork, and
+    preservation of your data on upgrades.

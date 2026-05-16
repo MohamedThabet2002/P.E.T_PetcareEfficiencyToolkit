@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+.wvenv/
+# Packaging
+build/
+dist/
+*.spec
+Output/
+
+# Installer dependencies (Do not track large binaries)
+vc_redist.x64.exe
+vc_redist.x86.exe
+
+# Local databases (never commit clinic data)
+Database.db
+pet_app.db
+*.db
+*.sqlite
+*.sqlite3
+*.sqlite-*
+
+# Local User Data & Logs
+Database.db-shm
+Database.db-wal
+app.log
+*.log
+*.log.*
+settings.json
+backups/
+
+# Local credentials, secrets, and private keys
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Test caches (tests/ directory IS versioned)
+.pytest_cache/
+
+# VS Code
+.vscode/
+.bashrc_local
+
+# New PET
+New PET/
