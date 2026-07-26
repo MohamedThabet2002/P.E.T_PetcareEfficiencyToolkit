@@ -11,7 +11,7 @@ All paths are local and may need to be adjusted for each developer machine.
 
 ###############################################################################
 # RELEASE PRE-REQUISITES:
-# 1. Ensure VERSION in src/config.py is updated.
+# 1. Ensure VERSION in src/config/meta.py is updated.
 # 2. Ensure assets/translations.json is complete.
 ###############################################################################
 
@@ -21,7 +21,7 @@ import os
 import sys
 import subprocess
 from pathlib import Path
-from src.config import VERSION, APP_NAME
+from src.config.meta import VERSION, APP_NAME
 
 INNO_SETUP_SCRIPT = Path(__file__).parent / "PetcareEfficiencyToolkit.iss"
 
@@ -52,7 +52,7 @@ def package_application() -> None:
     base_dir = Path(__file__).parent.absolute()
     entry_point = base_dir / "main.py"
     assets_dir = base_dir / "assets"
-    icon_path = assets_dir / "icons" / "app-ico.ico"
+    icon_path = assets_dir / "icons" / "app.ico"
 
     if not icon_path.exists():
         print(f"Warning: Icon not found at {icon_path}. Falling back to no icon.")
@@ -65,9 +65,13 @@ def package_application() -> None:
         "--noconsole",  # GUI app (no console window)
         "--onedir",  # Create a distribution folder
         "--clean",  # Clear cache before building
+        "--noconfirm",  # Overwrite build/dist without prompting (CI-friendly)
         f"--name={APP_NAME}",
         f"--icon={icon_path}" if icon_path else "",
         f"--add-data={str(assets_dir)}{os.pathsep}assets",
+        # openpyxl is imported lazily (Excel template/export paths), so
+        # PyInstaller's static analysis can miss it - declare it explicitly.
+        "--hidden-import=openpyxl",
         # Optimization/exclusions: avoid heavy Qt modules
         "--exclude-module=PyQt5.QtWebEngine",
         "--exclude-module=PyQt5.QtWebEngineWidgets",
@@ -92,7 +96,7 @@ def package_application() -> None:
     print("\nStep 2: Compiling Inno Setup Installer...")
     iscc_path = find_iscc()
     try:
-        # Pass the version from config.py directly to Inno Setup as a definition
+        # Pass the version from config/meta.py directly to Inno Setup as a definition
         iscc_command = [
             iscc_path,
             f"/dMyAppVersion={VERSION}",

@@ -1,7 +1,7 @@
 ===============================================================================
                 PETCARE EFFICIENCY TOOLKIT (P.E.T) - USER GUIDE
 ===============================================================================
-Version: 1.0.0
+Version: 2.0.0-beta1
 Developed by: Mohamed Thabet
 
 Thank you for using the Petcare Efficiency Toolkit. This application is designed 
@@ -30,6 +30,8 @@ You will lose all patient records, inventory history, and financial data.
 * INVENTORY TRACKING: Manage clinical supplies with automated stock alerts.
 * FINANCIAL TOOLS: Generate sales receipts and track clinic expenses.
 * ANALYTICS: View real-time charts for revenue and visit trends.
+* DOCTOR TRACKING: Assign doctors to visits, appointments, and follow-ups, including substitute coverage.
+* REPORTS: Review category-specific overview, financial, patient, supply, and audit reports.
 * MULTI-LANGUAGE: Full support for English and Arabic (RTL) interfaces.
 * DARK MODE: Switch between light and dark themes via the top status bar.
 * DATA SECURITY: Automatic database backups are created on application exit.

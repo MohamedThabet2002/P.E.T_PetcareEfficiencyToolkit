@@ -1,7 +1,9 @@
 import json
 import logging
+import os
 
-from src.config import SETTINGS_FILE, DEFAULT_CLINIC_NAME, DEFAULT_CLINIC_OWNER
+from src.config.paths import SETTINGS_FILE
+from src.config.constants import DEFAULT_CLINIC_NAME, DEFAULT_CONSULT_FEE, DEFAULT_AUTO_CANCEL_HOURS
 
 logger = logging.getLogger(__name__)
 
@@ -18,11 +20,23 @@ class SettingsManager:
         "language": "en",
         "theme": "light",
         "clinic_name": DEFAULT_CLINIC_NAME,
-        "user_name": DEFAULT_CLINIC_OWNER,
         "custom_logo": "",
 
         "window_mode": "windowed",
-        "dev_mode": False
+        "dev_mode": False,
+
+        # Consultation fee charged per visit (single source of truth).
+        "consultation_fee": DEFAULT_CONSULT_FEE,
+
+        # Hours an appointment/follow-up stays "Late" after its scheduled
+        # time before it is auto-canceled (Settings > Clinic Profile).
+        "auto_cancel_after_hours": DEFAULT_AUTO_CANCEL_HOURS,
+
+        # Remember-Me auto-login: stores the username to restore on next launch.
+        "auto_login_user": "",
+
+        # Last day (YYYY-MM-DD) the Reports page auto-saved its daily checkpoint.
+        "last_report_checkpoint": ""
     }
 
     @classmethod
@@ -59,12 +73,26 @@ class SettingsManager:
             bool: True if successful, False otherwise.
         """
         try:
-            with open(SETTINGS_FILE, 'w', encoding='utf-8') as f:
+            SETTINGS_FILE.parent.mkdir(parents=True, exist_ok=True)
+            # Write to a sibling temp file first, then swap it in atomically so a
+            # crash mid-write can never leave a truncated settings file behind.
+            tmp_file = SETTINGS_FILE.with_name(SETTINGS_FILE.name + ".tmp")
+            with open(tmp_file, 'w', encoding='utf-8') as f:
                 json.dump(settings_dict, f, indent=4)
+                f.flush()
+                os.fsync(f.fileno())
+            os.replace(tmp_file, SETTINGS_FILE)
             cls._cache = settings_dict.copy()
+            logger.info("Application settings saved (%d keys)", len(settings_dict))
             return True
         except Exception as e:
             logger.error(f"Failed to save settings to {SETTINGS_FILE}: {e}")
+            try:
+                tmp_file = SETTINGS_FILE.with_name(SETTINGS_FILE.name + ".tmp")
+                if tmp_file.exists():
+                    tmp_file.unlink()
+            except Exception:
+                pass
             return False
 
     @classmethod

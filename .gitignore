@@ -4,7 +4,7 @@ __pycache__/
 *$py.class
 .venv/
 venv/
-
+.wvenv/
 # Packaging
 build/
 dist/
@@ -15,14 +15,24 @@ Output/
 vc_redist.x64.exe
 vc_redist.x86.exe
 
-# Local User Data & Logs
+# Local databases (never commit clinic data)
 Database.db
+pet_app.db
+*.db
+
+# Local User Data & Logs
+Database.db-shm
+Database.db-wal
 app.log
 settings.json
 backups/
 
+# Test caches (tests/ directory IS versioned)
+.pytest_cache/
+
 # VS Code
 .vscode/
+.bashrc_local
 
-#New PET
+# New PET
 New PET/
