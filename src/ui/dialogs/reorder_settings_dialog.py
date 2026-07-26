@@ -8,21 +8,10 @@ from PyQt5.QtWidgets import QDialog, QVBoxLayout, QTableWidget, QTableWidgetItem
 
 import src.core.repositories.supply_repo as supply_repo
 from src.utils.i18n import tr
-from src.config import TR_CATEGORY, TR_SUB_CATEGORY, TR_ITEM_NAME
-
-#============================== TRANSLATABLE STRINGS ===================================================#
-
-TR_REORDER_WINDOW_TITLE = "Inventory Reorder Settings"
-TR_REORDER_WINDOW_HEADER = "Manage Global Reorder Levels"
-TR_REORDER_WINDOW_HELP = "Set the minimum total quantity (across all batches) for each item."
-TR_REORDER_WINDOW_TABLE_COL_REORDER_LEVEL = "Reorder Level"
-TR_REORDER_WINDOW_SAVE_SUCCESS_MSG = "✓ Saved successfully"
-TR_REORDER_WINDOW_SAVE_CHANGES = "Save Changes"
-TR_REORDER_WINDOW_CLOSE = "Close"
 
 #==================================== CONSTANTS =======================================================#
 
-TR_REORDER_WINDOW_TABLE_COL_NAMES = [TR_CATEGORY, TR_SUB_CATEGORY, TR_ITEM_NAME, TR_REORDER_WINDOW_TABLE_COL_REORDER_LEVEL]
+REORDER_WINDOW_TABLE_COL_NAMES = ["Category", "Sub-Category", "Item Name", "Reorder Level"]
 REORDER_WINDOW_DIMENSIONS_WIDTH = 600
 REORDER_WINDOW_DIMENSIONS_HEIGHT = 600
 REORDER_WINDOW_TABLE_COL_COUNT = 4
@@ -38,7 +27,7 @@ class ReorderSettingsDialog(QDialog):
     """
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle(tr(TR_REORDER_WINDOW_TITLE))
+        self.setWindowTitle(tr("Inventory Reorder Settings"))
         self.resize(REORDER_WINDOW_DIMENSIONS_WIDTH, REORDER_WINDOW_DIMENSIONS_HEIGHT)
         self.setup_ui()
         self.refresh_list()
@@ -46,17 +35,17 @@ class ReorderSettingsDialog(QDialog):
     def setup_ui(self):
         layout = QVBoxLayout(self)
         
-        header = QLabel(f"<b>{tr(TR_REORDER_WINDOW_HEADER)}</b>")
+        header = QLabel(f"<b>{tr('Manage Global Reorder Levels')}</b>")
         header.setStyleSheet("font-size: 14px; margin-bottom: 5px;")
         layout.addWidget(header)
         
-        help_text = QLabel(tr(TR_REORDER_WINDOW_HELP))
+        help_text = QLabel(tr("Set the minimum total quantity (across all batches) for each item."))
         help_text.setStyleSheet("color: #7F8C8D; margin-bottom: 10px;")
         layout.addWidget(help_text)
         
         self.table = QTableWidget()
         self.table.setColumnCount(REORDER_WINDOW_TABLE_COL_COUNT)
-        self.table.setHorizontalHeaderLabels([tr(col) for col in TR_REORDER_WINDOW_TABLE_COL_NAMES])
+        self.table.setHorizontalHeaderLabels([tr(col) for col in REORDER_WINDOW_TABLE_COL_NAMES])
         for i in range(REORDER_WINDOW_TABLE_COL_COUNT):
             self.table.horizontalHeader().setSectionResizeMode(i, QHeaderView.ResizeToContents)
         self.table.horizontalHeader().setSectionResizeMode(2, QHeaderView.Stretch) # make the 2nd column stretch
@@ -68,11 +57,11 @@ class ReorderSettingsDialog(QDialog):
         footer.addWidget(self.status_msg)
         footer.addStretch()
         
-        save_btn = QPushButton(tr(TR_REORDER_WINDOW_SAVE_CHANGES))
+        save_btn = QPushButton(tr("Save Changes"))
         save_btn.clicked.connect(self.save_all)
         footer.addWidget(save_btn)
         
-        close_btn = QPushButton(tr(TR_REORDER_WINDOW_CLOSE))
+        close_btn = QPushButton(tr("Close"))
         close_btn.clicked.connect(self.accept)
         footer.addWidget(close_btn)
         
@@ -111,5 +100,6 @@ class ReorderSettingsDialog(QDialog):
             level = self.table.cellWidget(i, 3).value()
             supply_repo.set_reorder_level(name, level)
         
-        self.status_msg.setText(tr(TR_REORDER_WINDOW_SAVE_SUCCESS_MSG))
+        self.status_msg.setText(tr("✓ Saved successfully"))
         self.status_msg.setStyleSheet("color: #2ECC71;")
+

@@ -15,7 +15,7 @@ from PyQt5.QtWidgets import (
 
 from src.core.repositories import client_repo
 import src.core.repositories.visit_repo as visit_repo
-from src.config import ICONS_DIR
+from src.config import ICONS_DIR, DATE_TIME_FORMAT_UI
 from src.ui.dialogs.clinical_dialogs import AddFullEntryDialog, EditVisitDialog, SupplyReceiptMixin
 from src.utils.formatters import format_age
 from src.utils.i18n import tr
@@ -26,29 +26,6 @@ from src.ui.base_page import (
     CLEAR_BUTTON_SIZE,
     CLEAR_ICON,
 )
-from src.config import (
-    TR_ADD, TR_SEARCH, TR_DELETE_SELECTED, TR_OK, TR_CANCEL, TR_ERROR, TR_SUCCESS, TR_INFO_TITLE,
-    TR_OWNER_NAME, TR_PET_NAME, TR_PHONE, TR_SPECIES, TR_BREED, TR_GENDER, TR_AGE, 
-    TR_WEIGHT, TR_DATE, TR_DIAGNOSIS, TR_NOTES, TR_VISIT_RECORDS, TR_QUICK_PURCHASE, TR_CONFIRM_DELETE_TITLE,
-    TR_YES, TR_NO, TR_ANONYMOUS, TR_VISIT_ID, TR_CLIENT_ID, TR_RECEIPT_ID, TR_CONSULT,
-    TR_INPUT_ERROR_HEADING, TR_DATABASE_ERROR_HEADING, TR_VALIDATION_ERROR, TR_SELECTION_REQUIRED,
-    DATE_TIME_FORMAT_UI, TR_ALL_FILTER_OPTION
-)
-
-#============================== TRANSLATABLE STRINGS ===================================================#
-
-TR_NO_VISIT_MSG = "This row has no clinical visit to delete."
-TR_NO_VISIT_TITLE = "No Visit"
-TR_CONFIRM_DELETE_VISIT_MSG = "Are you sure you want to delete the visit for '{pet}' ({owner}) on {date}?"
-TR_PURCHASE_SUCCESS_MSG = "Purchase recorded. Receipt ID: #{id}"
-TR_FAILED_RECORD_PURCHASE = "Failed to record purchase."
-TR_FAILED_CREATE_CLIENT = "Failed to create client"
-TR_DATE_LABEL = "Date:"
-TR_ESTIMATED_TOTAL_ZERO = "<b>Estimated Total: $0.00</b>"
-TR_ESTIMATED_TOTAL_FORMAT = "<b>Estimated Total: ${total:,.2f}</b>"
-TR_STOCK_ERROR = "Stock Error"
-TR_PLEASE_ADD_ONE_ITEM = "Please add at least one receipt item."
-TR_STOCK_ERROR_MSG = "Not enough stock for {item}."
 
 #=========================================== CONSTANTS ===================================================#
 
@@ -56,21 +33,21 @@ QUICK_PURCHASE_DIALOG_WINDOW_SIZE = (800, 600)
 
 # (Header Name, Database Key, Initial Width)
 HOME_COLUMN_MAP = [
-    (TR_VISIT_ID, "visit_id", 0),
-    (TR_CLIENT_ID, "owner_id", 0),
-    (TR_OWNER_NAME, "owner_full_name", 180),
-    (TR_PHONE, "phone_number", 150),
-    (TR_PET_NAME, "pet_name", 100),
-    (TR_SPECIES, "species_name", 80),
-    (TR_BREED, "breed_name", 120),
-    (TR_GENDER, "gender", 80),
-    (TR_AGE, "age_in_months", 120),
-    (TR_WEIGHT, "weight_in_kg", 80),
-    (TR_DATE, "visit_date", 140),
-    (TR_DIAGNOSIS, "diagnosis", 140),
-    (TR_CONSULT, "notes", 90),
-    (TR_NOTES, "notes", 400),
-    (TR_RECEIPT_ID, "receipt_id", 100),
+    ("Visit ID", "visit_id", 0),
+    ("Client ID", "owner_id", 0),
+    ("Owner Name", "owner_full_name", 180),
+    ("Phone Number", "phone_number", 150),
+    ("Pet Name", "pet_name", 100),
+    ("Species", "species_name", 80),
+    ("Breed", "breed_name", 120),
+    ("Gender", "gender", 80),
+    ("Age", "age_in_months", 120),
+    ("Weight", "weight_in_kg", 80),
+    ("Date", "visit_date", 140),
+    ("Diagnosis", "diagnosis", 140),
+    ("Consult", "notes", 90),
+    ("Notes", "notes", 400),
+    ("Receipt ID", "receipt_id", 100),
 ]
 
 QUICK_PURCHASE_DIALOG_WINDOW_MIN_SIZE = (800, 600)
@@ -113,13 +90,13 @@ class HomePage(QWidget):
         controls = QHBoxLayout()
         controls.setSpacing(0)
         
-        self.add_btn = QPushButton(f"{tr(TR_ADD)} {tr(TR_VISIT_RECORDS)}")
+        self.add_btn = QPushButton(f"{tr('Add')} {tr('Visit Records')}")
         
-        self.quick_purchase_btn = QPushButton(tr(TR_QUICK_PURCHASE))
+        self.quick_purchase_btn = QPushButton(tr("Quick Purchase"))
         self.quick_purchase_btn.setObjectName("quick_purchase_btn")
         
         self.search_bar = QLineEdit()
-        self.search_bar.setPlaceholderText(f"{tr(TR_SEARCH)} {tr(TR_VISIT_RECORDS)}...")
+        self.search_bar.setPlaceholderText(f"{tr('Search')} {tr('Visit Records')}...")
         self.search_bar.setProperty("action", "search")
         
         self.search_clear_btn = QPushButton()
@@ -139,9 +116,9 @@ class HomePage(QWidget):
         self.filter_combo.lineEdit().setReadOnly(True)
         self.filter_combo.lineEdit().setTextMargins(-2, 0, -6, 0)
         
-        self.filter_combo.addItems([tr(TR_ALL_FILTER_OPTION)] + [tr(h[0]) for h in HOME_COLUMN_MAP])
+        self.filter_combo.addItems([tr("All")] + [tr(h[0]) for h in HOME_COLUMN_MAP])
         
-        self.delete_btn = QPushButton(tr(TR_DELETE_SELECTED))
+        self.delete_btn = QPushButton(tr("Delete Selected"))
         
         controls.addWidget(self.add_btn)
         controls.addWidget(self.quick_purchase_btn)
@@ -240,16 +217,16 @@ class HomePage(QWidget):
     
     def retranslate_ui(self):
         # Keep signature consistent with other pages.
-        self.add_btn.setText(f"{tr(TR_ADD)} {tr(TR_VISIT_RECORDS)}")
-        self.quick_purchase_btn.setText(tr(TR_QUICK_PURCHASE))
-        self.search_bar.setPlaceholderText(f"{tr(TR_SEARCH)} {tr(TR_VISIT_RECORDS)}...")
-        self.delete_btn.setText(tr(TR_DELETE_SELECTED))
+        self.add_btn.setText(f"{tr('Add')} {tr('Visit Records')}")
+        self.quick_purchase_btn.setText(tr("Quick Purchase"))
+        self.search_bar.setPlaceholderText(f"{tr('Search')} {tr('Visit Records')}...")
+        self.delete_btn.setText(tr("Delete Selected"))
         
         # Refresh filter options (translated)
         current_text = self.filter_combo.currentText()
         self.filter_combo.blockSignals(True)
         self.filter_combo.clear()
-        self.filter_combo.addItems([tr(TR_ALL_FILTER_OPTION)] + [tr(h[0]) for h in HOME_COLUMN_MAP])
+        self.filter_combo.addItems([tr("All")] + [tr(h[0]) for h in HOME_COLUMN_MAP])
         # Best-effort: keep current text if possible
         idx = self.filter_combo.findText(current_text)
         if idx >= 0:
@@ -299,25 +276,25 @@ class HomePage(QWidget):
     def delete_selected_record(self):
         row = self.table.currentRow()
         if row < 0:
-            QMessageBox.warning(self, tr(TR_SELECTION_REQUIRED), tr("Please select a row to delete."))
+            QMessageBox.warning(self, tr("Selection Required"), tr("Please select a row to delete."))
             return
         
         visit_item = self.table.item(row, 0)
         if not visit_item:
-            QMessageBox.information(self, tr(TR_NO_VISIT_TITLE), tr(TR_NO_VISIT_MSG))
+            QMessageBox.information(self, tr("No Visit"), tr("This row has no clinical visit to delete."))
             return
         
         visit_id = visit_item.text()
         if not visit_id:
-            QMessageBox.information(self, tr(TR_NO_VISIT_TITLE), tr(TR_NO_VISIT_MSG))
+            QMessageBox.information(self, tr("No Visit"), tr("This row has no clinical visit to delete."))
             return
         
         owner = self.table.item(row, 2).text()
         pet = self.table.item(row, 4).text()
         date = self.table.item(row, 10).text()
         
-        msg = tr(TR_CONFIRM_DELETE_VISIT_MSG).format(pet=pet, owner=owner, date=date)
-        if QMessageBox.question(self, tr(TR_CONFIRM_DELETE_TITLE), msg) == QMessageBox.Yes:
+        msg = tr("Are you sure you want to delete the visit for '{pet}' ({owner}) on {date}?").format(pet=pet, owner=owner, date=date)
+        if QMessageBox.question(self, tr("Confirm Delete"), msg) == QMessageBox.Yes:
             if visit_repo.delete_visit(visit_id):
                 self.refresh_home_table(self.search_bar.text())
                 self.data_changed.emit()
@@ -333,12 +310,12 @@ class QuickPurchaseDialog(QDialog, SupplyReceiptMixin):
                     total += float(qty_sb.value()) * float(price_sb.value())
         
         if hasattr(self, "total_label"):
-            self.total_label.setText(tr(TR_ESTIMATED_TOTAL_FORMAT).format(total=total))
+            self.total_label.setText(tr("<b>Estimated Total: ${total:,.2f}</b>").format(total=total))
 
     def __init__(self, parent=None):
 
         super().__init__(parent)
-        self.setWindowTitle(tr(TR_QUICK_PURCHASE))
+        self.setWindowTitle(tr("Quick Purchase"))
         self.setMinimumSize(*QUICK_PURCHASE_DIALOG_WINDOW_MIN_SIZE)
 
         root = QVBoxLayout(self)
@@ -349,7 +326,7 @@ class QuickPurchaseDialog(QDialog, SupplyReceiptMixin):
         self.date_edit.setCalendarPopup(True)
         self.date_edit.setDisplayFormat(DATE_TIME_FORMAT_UI)
         self.date_edit.setDateTime(QDateTime.currentDateTime())
-        top.addWidget(QLabel(tr(TR_DATE_LABEL)))
+        top.addWidget(QLabel(tr("Date:")))
         top.addWidget(self.date_edit)
         top.addStretch()
         root.addLayout(top)
@@ -358,7 +335,7 @@ class QuickPurchaseDialog(QDialog, SupplyReceiptMixin):
         name_layout = QHBoxLayout()
         name_layout.setContentsMargins(0, 0, 0, 0)
         self.client_name_edit = QLineEdit()  # This is intentionally left empty by default
-        self.client_name_edit.setPlaceholderText(tr(TR_OWNER_NAME))
+        self.client_name_edit.setPlaceholderText(tr("Owner Name"))
 
         # 300px minimum, left-aligned, and allowed to expand with the dialog/window.
         self.client_name_edit.setMinimumWidth(250)
@@ -366,7 +343,7 @@ class QuickPurchaseDialog(QDialog, SupplyReceiptMixin):
 
         self.client_name_edit.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
         
-        name_layout.addWidget(QLabel(tr(TR_OWNER_NAME) + ":"))
+        name_layout.addWidget(QLabel(tr("Owner Name") + ":"))
         name_layout.addWidget(self.client_name_edit,1)
         root.addLayout(name_layout)
 
@@ -377,12 +354,12 @@ class QuickPurchaseDialog(QDialog, SupplyReceiptMixin):
         self._setup_supplies_section(form_layout)
 
         # Total label (for estimated purchase total)
-        self.total_label = QLabel(tr(TR_ESTIMATED_TOTAL_ZERO))
+        self.total_label = QLabel(tr("<b>Estimated Total: $0.00</b>"))
         self.total_label.setProperty("name", "total-price")
 
         self.buttons = QDialogButtonBox()
-        self.ok_button = self.buttons.addButton(tr(TR_OK), QDialogButtonBox.AcceptRole)
-        self.cancel_button = self.buttons.addButton(tr(TR_CANCEL), QDialogButtonBox.RejectRole)
+        self.ok_button = self.buttons.addButton(tr("OK"), QDialogButtonBox.AcceptRole)
+        self.cancel_button = self.buttons.addButton(tr("Cancel"), QDialogButtonBox.RejectRole)
         self.buttons.accepted.connect(self.handle_accept)
         self.buttons.rejected.connect(self.reject)
 
@@ -401,7 +378,7 @@ class QuickPurchaseDialog(QDialog, SupplyReceiptMixin):
         
         name_input = self.client_name_edit.text().strip()
         if not name_input:
-            name_input = tr(TR_ANONYMOUS)
+            name_input = tr("Anonymous")
         
         formatted_name = name_input.title()
         client = client_repo.get_clients_by_name_exact(formatted_name)
@@ -410,14 +387,14 @@ class QuickPurchaseDialog(QDialog, SupplyReceiptMixin):
         else:
             client_id = client_repo.add_client(formatted_name, "")
             if not client_id:
-                QMessageBox.critical(self, tr(TR_ERROR), tr(TR_FAILED_CREATE_CLIENT))
+                QMessageBox.critical(self, tr("Error"), tr("Failed to create client"))
                 return
             client_id = int(client_id)
         
         # Create a visit-less sale receipt (moved into repository layer).
         items = self.get_final_items()
         if not items:
-            QMessageBox.warning(self, tr(TR_VALIDATION_ERROR), tr(TR_PLEASE_ADD_ONE_ITEM))
+            QMessageBox.warning(self, tr("Validation Error"), tr("Please add at least one receipt item."))
             return
 
         # Refactored to use visit_repo.add_visit to ensure:
@@ -426,7 +403,7 @@ class QuickPurchaseDialog(QDialog, SupplyReceiptMixin):
         # 3. Financial receipt is generated
         result = visit_repo.add_visit(
             visit_date=self.date_edit.dateTime().toString(DATE_TIME_FORMAT_UI),
-            diagnosis=tr(TR_QUICK_PURCHASE),
+            diagnosis=tr("Quick Purchase"),
             consult=0,
             notes="",
             pet_id=None,
@@ -435,13 +412,14 @@ class QuickPurchaseDialog(QDialog, SupplyReceiptMixin):
         )
 
         if not result:
-            QMessageBox.critical(self, tr(TR_ERROR), tr(TR_FAILED_RECORD_PURCHASE))
+            QMessageBox.critical(self, tr("Error"), tr("Failed to record purchase."))
             return
 
         if isinstance(result, str) and result.startswith("STOCK_ERROR"):
             _, name, _qty = result.split("|")
-            QMessageBox.warning(self, tr(TR_STOCK_ERROR), tr(TR_STOCK_ERROR_MSG).format(item=name))
+            QMessageBox.warning(self, tr("Stock Error"), tr("Not enough stock for {item}.").format(item=name))
             return
 
-        QMessageBox.information(self, tr(TR_SUCCESS), tr(TR_PURCHASE_SUCCESS_MSG).format(id=result))
+        QMessageBox.information(self, tr("Success"), tr("Purchase recorded. Receipt ID: #{id}").format(id=result))
         self.accept()
+

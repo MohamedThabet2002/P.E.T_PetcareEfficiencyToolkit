@@ -17,19 +17,7 @@ from PyQt5.QtCore import Qt, QDate, QSize
 from PyQt5.QtGui import QColor, QIcon
 
 from src.config import (
-    ICONS_DIR, TR_OK, TR_CANCEL, TR_ALL_FILTER_OPTION, TR_SELECT_SUBCATEGORY_PLACEHOLDER, 
-    TR_CATEGORY, TR_SUB_CATEGORY, TR_ITEM_NAME, TR_BUY_PRICE, TR_SELL_PRICE, TR_QUANTITY,
-    TR_PURCHASE_DATE, TR_EXPIRY_DATE, TR_SUPPLIER, TR_RECEIPT_ID, TR_ID, TR_DELETE_BUTTON_SYMBOL,
-    TR_BULK_PURCHASE_TITLE, TR_COMMON_SUPPLIER_PLACEHOLDER, TR_PURCHASE_DATE_LABEL, TR_DEFAULT_SUPPLIER_LABEL,
-    TR_ADD_ROW_LABEL, TR_TOTAL_PURCHASE_LABEL, TR_ITEM_NAME_REQUIRED_MSG, TR_VALIDATION_ERROR,
-    TR_SUCCESS, TR_SUCCESS_PROCESS_MSG, TR_NO_CATEGORIES_MSG, TR_ADD_SUPPLY_ITEM_TITLE,
-    TR_SUB_CATEGORY_REQUIRED_MSG, TR_INPUT_ERROR_HEADING, TR_DUPLICATE_FOUND_TITLE, TR_DUPLICATE_SUPPLY_MSG,
-    TR_FAILED_UPDATE_STOCK_MSG, TR_ERROR, TR_WARNING, TR_STOCK_UPDATED_WARNING_MSG, TR_UPDATE_TITLE,
-    TR_SUCCESS_ADDED_TO_STOCK_MSG, TR_ADDED_TO_CATEGORY_MSG, TR_FAILED_ADD_NEW_SUPPLY_MSG,
-    TR_EDIT_SUPPLY_ITEM_TITLE, TR_SELECTION_REQUIRED, TR_SELECT_SUPPLY_DELETE_MSG, TR_ITEM_NAME_LABEL,
-    TR_SUB_CATEGORY_LABEL, TR_PURCHASE_DATE_LABEL, TR_EXPIRY_DATE_LABEL, TR_BUY_PRICE_LABEL,
-    TR_SELL_PRICE_LABEL, TR_QUANTITY_LABEL, TR_SUPPLIER_LABEL, TR_EDIT_SUPPLY_ITEM_TITLE,
-    TR_CONFIRM_DELETE_TITLE, TR_DELETE_SUPPLY_MSG, DEFAULT_EXPIRY_YEARS, TR_BULK_PURCHASE_BUTTON_LABEL
+    ICONS_DIR, DEFAULT_EXPIRY_YEARS
 )
 from src.ui.themes.color_palettes import get_active_palette, ThemeManager
 import src.core.repositories.sales_repo as sales_repo
@@ -50,25 +38,25 @@ SUPPLY_CONFIG = {
 }
 
 SUPPLY_COLUMN_MAP = [
-    (TR_ID,             "id",               0),
-    (TR_ITEM_NAME,      "item_name",        200),
-    (TR_SUB_CATEGORY,   "sub_category",     150),
-    (TR_PURCHASE_DATE,  "purchase_date",    150),
-    (TR_EXPIRY_DATE,    "expiry_date",      150),
-    (TR_BUY_PRICE,      "buy_price",        120),
-    (TR_SELL_PRICE,     "sell_price",       120),
-    (TR_QUANTITY,       "quantity",         100),
-    (TR_SUPPLIER,       "supplier",         150),
-    (TR_RECEIPT_ID,     "receipt_id",       100)
+    ("ID",             "id",               0),
+    ("Item Name",      "item_name",        200),
+    ("Sub-Category",   "sub_category",     150),
+    ("Purchase Date",  "purchase_date",    150),
+    ("Expiry Date",    "expiry_date",      150),
+    ("Buy Price",      "buy_price",        120),
+    ("Sell Price",     "sell_price",       120),
+    ("Quantity",       "quantity",         100),
+    ("Supplier",       "supplier",         150),
+    ("Receipt ID",     "receipt_id",       100)
 ]
 
 BULK_PURCHASE_ROW_MAP = [
-    (TR_CATEGORY, "category", 120),
-    (TR_SUB_CATEGORY, "sub_category", 120),
-    (TR_ITEM_NAME, "item_name", 200),
-    (TR_BUY_PRICE, "buy_price", 80),
-    (TR_SELL_PRICE, "sell_price", 80),
-    (TR_QUANTITY, "quantity", 70)
+    ("Category", "category", 120),
+    ("Sub-Category", "sub_category", 120),
+    ("Item Name", "item_name", 200),
+    ("Buy Price", "buy_price", 80),
+    ("Sell Price", "sell_price", 80),
+    ("Quantity", "quantity", 70)
 ]
 
 #============================================== CODE =====================================================#
@@ -80,7 +68,7 @@ class BulkPurchaseDialog(QDialog):
     """
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle(tr(TR_BULK_PURCHASE_TITLE))
+        self.setWindowTitle(tr("Bulk Inventory Purchase"))
         self.setMinimumSize(*SUPPLY_CONFIG["BULK_WINDOW_SIZE"])
         self._rows = []
         self._setup_ui()
@@ -96,16 +84,16 @@ class BulkPurchaseDialog(QDialog):
         self.purchase_date.setFixedWidth(SUPPLY_CONFIG["DATE_FIELD_WIDTH"])
         self.supplier = QLineEdit()
         self.supplier.setFixedWidth(SUPPLY_CONFIG["SUPPLIER_FIELD_WIDTH"])
-        self.supplier.setPlaceholderText(tr(TR_COMMON_SUPPLIER_PLACEHOLDER))
+        self.supplier.setPlaceholderText(tr("Common Supplier (optional)"))
         
-        header_layout.addWidget(QLabel(tr(TR_PURCHASE_DATE_LABEL)))
+        header_layout.addWidget(QLabel(tr("Purchase Date:")))
         header_layout.addWidget(self.purchase_date)
         header_layout.addStretch()
-        header_layout.addWidget(QLabel(tr(TR_DEFAULT_SUPPLIER_LABEL)))
+        header_layout.addWidget(QLabel(tr("Default Supplier:")))
         header_layout.addWidget(self.supplier)
         header_layout.addStretch()
         
-        add_row_btn = QPushButton(tr(TR_ADD_ROW_LABEL))
+        add_row_btn = QPushButton(tr("+ Add Row"))
         add_row_btn.clicked.connect(self._add_row)
         header_layout.addWidget(add_row_btn)
         
@@ -134,14 +122,14 @@ class BulkPurchaseDialog(QDialog):
 
         # Bottom Section: Buttons
         footer_layout = QHBoxLayout()
-        self.total_label = QLabel(tr(TR_TOTAL_PURCHASE_LABEL))
+        self.total_label = QLabel(tr("<b>Total Purchase: ${total:,.2f}</b>"))
         self.total_label.setStyleSheet("font-size: 14px; color: #2ECC71; margin-left: 10px;")
         footer_layout.addWidget(self.total_label)
         footer_layout.addStretch()
 
         self.buttons = QDialogButtonBox()
-        ok_button = self.buttons.addButton(tr(TR_OK), QDialogButtonBox.AcceptRole)
-        cancel_button = self.buttons.addButton(tr(TR_CANCEL), QDialogButtonBox.RejectRole)
+        ok_button = self.buttons.addButton(tr("OK"), QDialogButtonBox.AcceptRole)
+        cancel_button = self.buttons.addButton(tr("Cancel"), QDialogButtonBox.RejectRole)
         self.buttons.accepted.connect(self._handle_accept)
         self.buttons.rejected.connect(self.reject)
         footer_layout.addWidget(self.buttons)
@@ -179,7 +167,7 @@ class BulkPurchaseDialog(QDialog):
         sell = QDoubleSpinBox(); sell.setMaximum(9999); sell.setFixedWidth(BULK_PURCHASE_ROW_MAP[4][2])
         qty = QSpinBox(); qty.setMaximum(9999); qty.setFixedWidth(BULK_PURCHASE_ROW_MAP[5][2]); qty.setValue(1)
         
-        del_btn = QPushButton(tr(TR_DELETE_BUTTON_SYMBOL))
+        del_btn = QPushButton(tr("✕"))
         del_btn.setFixedSize(*SUPPLY_CONFIG["DELETE_BTN_SIZE"])
         del_btn.setProperty("action", "delete")
 
@@ -224,7 +212,7 @@ class BulkPurchaseDialog(QDialog):
         for i, row in enumerate(self._rows):
             name_widget = row[2] # item_name QComboBox
             if not name_widget.currentText().strip():
-                QMessageBox.warning(self, tr(TR_VALIDATION_ERROR), tr(TR_ITEM_NAME_REQUIRED_MSG).format(row=i + 1))
+                QMessageBox.warning(self, tr("Validation Error"), tr("Item name is required for row {row}.").format(row=i + 1))
                 name_widget.setFocus()
                 return
         self.accept()
@@ -235,7 +223,7 @@ class BulkPurchaseDialog(QDialog):
         for row in self._rows:
             # row data format: (cat, sub, name, buy, sell, qty)
             total += row[3].value() * row[5].value()
-        self.total_label.setText(tr(TR_TOTAL_PURCHASE_LABEL).format(total=total))
+        self.total_label.setText(tr("<b>Total Purchase: ${total:,.2f}</b>").format(total=total))
 
     def get_data(self):
         """Returns formatted list of items for processing."""
@@ -276,7 +264,7 @@ class SuppliesPage(BaseEntityPage):
     def _setup_ui(self):
         """Initializes the UI layout and dynamically creates category tabs."""
         # Add Bulk Purchase button to the corner of the tab widget
-        self.bulk_purchase_btn = QPushButton(tr(TR_BULK_PURCHASE_BUTTON_LABEL))
+        self.bulk_purchase_btn = QPushButton(tr(" Bulk Inventory Purchase "))
         self.bulk_purchase_btn.setIcon(QIcon(os.path.join(ICONS_DIR, SUPPLY_CONFIG["BULK_ICO"])))
         self.bulk_purchase_btn.setCursor(Qt.PointingHandCursor)
         self.bulk_purchase_btn.clicked.connect(self.open_bulk_purchase_dialog)
@@ -287,7 +275,7 @@ class SuppliesPage(BaseEntityPage):
         # Placeholder for empty inventory structure
         self.placeholder_widget = QWidget()
         p_layout = QVBoxLayout(self.placeholder_widget)
-        self.placeholder_label = QLabel(tr(TR_NO_CATEGORIES_MSG))
+        self.placeholder_label = QLabel(tr("No inventory categories found. Please add some in Settings > Custom Lists."))
         self.placeholder_label.setAlignment(Qt.AlignCenter)
         self.placeholder_label.setStyleSheet("font-size: 16px; color: #7f8c8d; line-height: 150%;")
         p_layout.addStretch()
@@ -317,7 +305,7 @@ class SuppliesPage(BaseEntityPage):
             self.create_tab(
                 name=category,
                 headers=header_keys,
-                filter_items=[TR_ALL_FILTER_OPTION] + subs,
+                filter_items=["All"] + subs,
                 add_callback=lambda _, c=category: self.add_supply_dialog(c),
                 delete_callback=lambda _, c=category: self.delete_selected_supply(c),
                 refresh_callback=lambda text, c=category: self.refresh_category_table(c, text),
@@ -329,7 +317,7 @@ class SuppliesPage(BaseEntityPage):
     def retranslate_ui(self):
         """Updates UI text for all tabs and headers when language changes."""
         self.rebuild_tabs()
-        self.bulk_purchase_btn.setText(tr(TR_BULK_PURCHASE_BUTTON_LABEL))
+        self.bulk_purchase_btn.setText(tr(" Bulk Inventory Purchase "))
         
     def on_row_double_clicked(self, category, row):
         """Triggers the edit flow when a supply row is double-clicked."""
@@ -380,14 +368,14 @@ class SuppliesPage(BaseEntityPage):
                         success_count += 1
             
             if success_count > 0:
-                QMessageBox.information(self, tr(TR_SUCCESS), tr(TR_SUCCESS_PROCESS_MSG).format(count=success_count))
+                QMessageBox.information(self, tr("Success"), tr("Successfully processed {count} items.").format(count=success_count))
                 self.refresh_all_tabs()
                 self.data_changed.emit()
 
     def add_supply_dialog(self, category):
         """Opens a dialog to add a new inventory item."""
         dialog = QDialog(self)
-        dialog.setWindowTitle(tr(TR_ADD_SUPPLY_ITEM_TITLE).format(category=tr(category)))
+        dialog.setWindowTitle(tr("Add {category}").format(category=tr(category)))
         dialog.setFixedSize(*SUPPLY_CONFIG["DIALOG_SIZE"])
         layout = QFormLayout(dialog)
         
@@ -399,7 +387,7 @@ class SuppliesPage(BaseEntityPage):
         sub_category.setEditable(True)
         sub_category.setInsertPolicy(QComboBox.NoInsert)
         sub_category.completer().setFilterMode(Qt.MatchContains)
-        sub_category.setPlaceholderText(tr(TR_SELECT_SUBCATEGORY_PLACEHOLDER))
+        sub_category.setPlaceholderText(tr("Select Sub-Category..."))
         sub_category.addItems(supply_repo.get_subcategories_by_category(category))
         sub_category.setCurrentIndex(-1)
         purchase_date = QDateEdit(calendarPopup=True)
@@ -412,26 +400,26 @@ class SuppliesPage(BaseEntityPage):
         quantity = QSpinBox(); quantity.setMaximum(99999)
         supplier = QLineEdit()
         
-        layout.addRow(tr(TR_ITEM_NAME_LABEL), item_name)
-        layout.addRow(tr(TR_SUB_CATEGORY_LABEL), sub_category)
-        layout.addRow(tr(TR_PURCHASE_DATE_LABEL), purchase_date)
-        layout.addRow(tr(TR_EXPIRY_DATE_LABEL), expiry_date)
-        layout.addRow(tr(TR_BUY_PRICE_LABEL), buy_price)
-        layout.addRow(tr(TR_SELL_PRICE_LABEL), sell_price)
-        layout.addRow(tr(TR_QUANTITY_LABEL), quantity)
-        layout.addRow(tr(TR_SUPPLIER_LABEL), supplier)
+        layout.addRow(tr("Item Name*:"), item_name)
+        layout.addRow(tr("Sub-Category*:"), sub_category)
+        layout.addRow(tr("Purchase Date:"), purchase_date)
+        layout.addRow(tr("Expiry Date:"), expiry_date)
+        layout.addRow(tr("Buy Price:"), buy_price)
+        layout.addRow(tr("Sell Price:"), sell_price)
+        layout.addRow(tr("Quantity:"), quantity)
+        layout.addRow(tr("Supplier:"), supplier)
         # Dialog box button to add or cancel
         buttons = QDialogButtonBox()
-        ok_button = buttons.addButton(tr(TR_OK), QDialogButtonBox.AcceptRole)
-        cancel_button = buttons.addButton(tr(TR_CANCEL), QDialogButtonBox.RejectRole)
+        ok_button = buttons.addButton(tr("OK"), QDialogButtonBox.AcceptRole)
+        cancel_button = buttons.addButton(tr("Cancel"), QDialogButtonBox.RejectRole)
         
         def handle_accept():
             if not item_name.text().strip():
-                QMessageBox.warning(dialog, tr(TR_INPUT_ERROR_HEADING), tr(TR_ITEM_NAME_REQUIRED_MSG))
+                QMessageBox.warning(dialog, tr("Input Error"), tr("Item name is required for row {row}."))
                 return
             
             if sub_category.currentIndex() == -1:
-                QMessageBox.warning(dialog, tr(TR_INPUT_ERROR_HEADING), tr(TR_SUB_CATEGORY_REQUIRED_MSG))
+                QMessageBox.warning(dialog, tr("Input Error"), tr("Sub Category is required."))
                 return
             
             # Extract values for checking
@@ -452,7 +440,7 @@ class SuppliesPage(BaseEntityPage):
                 target_sell = None
                 
                 if buy_val != existing["buy_price"] or sell_val != existing["sell_price"]:
-                    reply = QMessageBox.question(dialog, tr(TR_DUPLICATE_FOUND_TITLE), tr(TR_DUPLICATE_SUPPLY_MSG), QMessageBox.Yes | QMessageBox.No)
+                    reply = QMessageBox.question(dialog, tr("Duplicate Found"), tr("An existing supply was found. The quantity will be added. Do you want to update the price values as well?"), QMessageBox.Yes | QMessageBox.No)
                     if reply == QMessageBox.Yes:
                         target_buy = buy_val
                         target_sell = sell_val
@@ -466,14 +454,14 @@ class SuppliesPage(BaseEntityPage):
                 )
                 
                 if not updated:
-                    QMessageBox.critical(dialog, tr(TR_ERROR), tr(TR_FAILED_UPDATE_STOCK_MSG))
+                    QMessageBox.critical(dialog, tr("Error"), tr("Failed to update supply stock."))
                     return
                 
                 if expense_details:
                     res_rid = sales_repo.log_supply_purchase_expense(**expense_details)
                     if not res_rid:
-                            QMessageBox.warning(dialog, tr(TR_WARNING), tr(TR_STOCK_UPDATED_WARNING_MSG))
-                QMessageBox.information(dialog, tr(TR_UPDATE_TITLE), tr(TR_SUCCESS_ADDED_TO_STOCK_MSG).format(qty=qty_val))
+                            QMessageBox.warning(dialog, tr("Warning"), tr("Stock updated, but failed to log expense record."))
+                QMessageBox.information(dialog, tr("Update"), tr("Successfully added {qty} to existing stock.").format(qty=qty_val))
                 dialog.accept() # Close dialog after update attempt
             else:
                 # Add as new record if no match found
@@ -491,14 +479,14 @@ class SuppliesPage(BaseEntityPage):
                 if supply_id is not None:
                     if expense_details:
                         res_rid = sales_repo.log_supply_purchase_expense(**expense_details)
-                        if not res_rid:
-                            QMessageBox.warning(dialog, tr(TR_WARNING), tr(TR_STOCK_UPDATED_WARNING_MSG))
-                            supply_repo.update_supply_receipt(supply_id, res_rid)
+                    if not res_rid:
+                        QMessageBox.warning(dialog, tr("Warning"), tr("Stock updated, but failed to log expense record."))
+                    supply_repo.update_supply_receipt(supply_id, res_rid)
                             
-                    QMessageBox.information(dialog, tr(TR_SUCCESS), tr(TR_ADDED_TO_CATEGORY_MSG).format(name=name_val, category=tr(category)))
+                    QMessageBox.information(dialog, tr("Success"), tr("{name} added to {category}").format(name=name_val, category=tr(category)))
                     dialog.accept()
                 else:
-                    QMessageBox.critical(dialog, tr(TR_ERROR), tr(TR_FAILED_ADD_NEW_SUPPLY_MSG))
+                    QMessageBox.critical(dialog, tr("Error"), tr("Failed to add new supply."))
             
             self.refresh_category_table(category, "")
             self.data_changed.emit()
@@ -520,7 +508,7 @@ class SuppliesPage(BaseEntityPage):
         if not data: return
 
         dialog = QDialog(self)
-        dialog.setWindowTitle(tr(TR_EDIT_SUPPLY_ITEM_TITLE).format(item=data['item_name']))
+        dialog.setWindowTitle(tr("Edit {item}").format(item=data['item_name']))
         dialog.setFixedSize(*SUPPLY_CONFIG["DIALOG_SIZE"])
         layout = QFormLayout(dialog)
 
@@ -541,13 +529,13 @@ class SuppliesPage(BaseEntityPage):
         qty = QSpinBox(); qty.setMaximum(99999); qty.setValue(data['quantity'])
         supplier = QLineEdit(data['supplier'] or "")
 
-        layout.addRow(tr(TR_ITEM_NAME), name); layout.addRow(tr(TR_SUB_CATEGORY), sub); layout.addRow(tr(TR_PURCHASE_DATE), p_date)
-        layout.addRow(tr(TR_EXPIRY_DATE), e_date); layout.addRow(tr(TR_BUY_PRICE), buy); layout.addRow(tr(TR_SELL_PRICE), sell)
-        layout.addRow(tr(TR_QUANTITY), qty); layout.addRow(tr(TR_SUPPLIER), supplier)
+        layout.addRow(tr("Item Name"), name); layout.addRow(tr("Sub-Category"), sub); layout.addRow(tr("Purchase Date"), p_date)
+        layout.addRow(tr("Expiry Date"), e_date); layout.addRow(tr("Buy Price"), buy); layout.addRow(tr("Sell Price"), sell)
+        layout.addRow(tr("Quantity"), qty); layout.addRow(tr("Supplier"), supplier)
 
         buttons = QDialogButtonBox()
-        ok_button = buttons.addButton(tr(TR_OK), QDialogButtonBox.AcceptRole)
-        cancel_button = buttons.addButton(tr(TR_CANCEL), QDialogButtonBox.RejectRole)
+        ok_button = buttons.addButton(tr("OK"), QDialogButtonBox.AcceptRole)
+        cancel_button = buttons.addButton(tr("Cancel"), QDialogButtonBox.RejectRole)
         def handle_save():
             if supply_repo.update_supply(supply_id, name.text().strip().title(), category, sub.currentText(), p_date.date().toString(Qt.ISODate),
                                          e_date.date().toString(Qt.ISODate), buy.value(), sell.value(), qty.value(), supplier.text().strip()):
@@ -613,14 +601,14 @@ class SuppliesPage(BaseEntityPage):
         table = self.tables[category]
         row = table.currentRow()
         if row < 0:
-            QMessageBox.information(self, tr(TR_SELECTION_REQUIRED), tr(TR_SELECT_SUPPLY_DELETE_MSG))
+            QMessageBox.information(self, tr("Selection Required"), tr("Please select a supply to delete."))
             return
             
         supply_id = table.item(row, 0).text()
         item_name = table.item(row, 1).text()
         
-        reply = QMessageBox.question(   self, tr(TR_CONFIRM_DELETE_TITLE),
-                                        tr(TR_DELETE_SUPPLY_MSG).format(item=item_name, category=tr(category)),
+        reply = QMessageBox.question(   self, tr("Confirm Delete"),
+                                        tr("Delete '{item}' from {category}?").format(item=item_name, category=tr(category)),
                                         QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if reply == QMessageBox.Yes:
             if supply_repo.delete_supply(supply_id):

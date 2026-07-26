@@ -15,6 +15,7 @@ from PyQt5.QtGui import QPixmap, QIcon, QPainter, QColor
 from src.utils.i18n import tr
 from src.utils.settings_manager import SettingsManager
 from src.config import ICONS_DIR, DEFAULT_CLINIC_NAME
+
 from src.ui.themes.color_palettes import get_active_palette
 
 #====================================== HELPER FUNCTIONS =======================================================#
@@ -39,26 +40,17 @@ def recolor_icon(path, color_off, color_on):
     icon.addPixmap(get_colored_pixmap(color_on), QIcon.Normal, QIcon.On)
     return icon
 
-#============================== TRANSLATABLE STRINGS ===================================================#
-
-TR_MENU_DASHBOARD = "Dashboard"
-TR_MENU_HOME = "Home"
-TR_MENU_CLIENTS = "Clients"
-TR_MENU_SUPPLIES = "Supplies"
-TR_MENU_RECEIPTS = "Receipts"
-TR_MENU_EXIT = "Exit"
-
 #=========================================== CONSTANTS ===================================================#
 
 # --- Sidebar Tuning Configuration ---
 MENU_ITEMS = {
     #(Name, Title)
-    "dashboard": TR_MENU_DASHBOARD,
-    "home": TR_MENU_HOME,
-    "clients": TR_MENU_CLIENTS,
-    "supplies": TR_MENU_SUPPLIES,
-    "receipts": TR_MENU_RECEIPTS,
-    "exit": TR_MENU_EXIT
+    "dashboard": "Dashboard",
+    "home": "Home",
+    "clients": "Clients",
+    "supplies": "Supplies",
+    "receipts": "Receipts",
+    "exit": "Exit"
 }
 
 LOGO_ICON = "logo-ico.png"
@@ -84,7 +76,7 @@ SIDEBAR_CONFIG = {
                 "logo_size": LOGO_ICON_SIZE,
                 "icon_file": NAV_ICON,
                 "icon_size": NAV_ICON_SIZE,
-                "btn_label": MENU_ITEMS.items(),
+                "btn_label": list(MENU_ITEMS.items()),
                 "btn_size": BUTTON_BIG_SIZE}
 }
 

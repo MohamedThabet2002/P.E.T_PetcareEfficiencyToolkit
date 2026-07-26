@@ -19,67 +19,12 @@ import src.core.repositories.appointment_repo as appointment_repo
 import src.core.repositories.analytics_repo as analytics_repo
 import src.core.repositories.supply_repo as supply_repo
 from src.utils.i18n import tr
-#============================== TRANSLATABLE STRINGS ===================================================#
-
-TR_NEXT_APPOINTMENT_TITLE = "Next Client Scheduled in"
-TR_TOTAL_VISITS_TITLE = "Total Visits"
-TR_TOTAL_REVENUE_TITLE = "Total Revenue"
-TR_LOW_STOCK_SUPPLIES_TITLE = "Low Stock Supplies"
-TR_AVG_REVENUE_TITLE = "Avg Revenue / Visit"
-TR_APPOINTMENTS_TITLE = "Appointments"
-TR_EXPIRING_SOON_TITLE = "Expiring Soon (30d)"
-TR_TOP_SELLING_TITLE = "Top Selling Items"
-TR_MONTHLY_DIAGNOSES_TITLE = "Monthly Diagnoses"
-TR_REVENUE_TREND_TITLE = "Revenue Trend"
-TR_VISITS_TREND_TITLE = "Visits Trend"
-TR_SUPPLIES_SOLD_TREND_TITLE = "Supplies Sold Trend"
-TR_PET_DISTRIBUTION_TITLE = "Pet Distribution"
-TR_SUPPLIES_SALES_TITLE = "Supplies Sales"
-TR_SUPPLIES_STOCK_TITLE = "Supplies Stock"
-TR_TOTAL_SUPPLIES_TITLE = "Total Supplies by Category"
-
-# Period Labels
-TR_PERIOD_DAY_SHORT = "D"
-TR_PERIOD_WEEK_SHORT = "W"
-TR_PERIOD_MONTH_SHORT = "M"
-TR_PERIOD_YEAR_SHORT = "Y"
-TR_PERIOD_ALL_SHORT = "All"
-TR_SUPPLIES_STOCKS_TITLE = "Supplies Stocks"
-
-# Table Headers
-TR_DATE_HEADER = "Date"
-TR_SERVICE_HEADER = "Service"
-TR_STATUS_HEADER = "Status"
-TR_ITEM_HEADER = "Item"
-TR_CATEGORY_HEADER = "Category"
-TR_SOLD_HEADER = "Sold"
-TR_DIAGNOSIS_HEADER = "Diagnosis"
-TR_COUNT_HEADER = "Count"
-
-# Chart Series Labels
-TR_REVENUE_LABEL = "Revenue"
-TR_COSTS_LABEL = "Costs"
-TR_NET_INCOME_LABEL = "Net Income"
-TR_VISITS_LABEL = "Visits"
-TR_SALES_SUFFIX = "Sales"
-TR_CATEGORY_SALES_TITLE = "{category} Sales"
-
-# Status Values
-TR_STATUS_PENDING = "Pending"
-TR_STATUS_COMPLETED = "Completed"
-TR_STATUS_CANCELED = "Canceled"
-
-# Other Labels
-TR_QUANTITY_LABEL = "Quantity"
-TR_STOCKS_SUFFIX = "Stocks"
-TR_TOTAL_QUANTITY_LABEL = "Total Quantity"
-TR_CATEGORY_STOCKS_TITLE = "{category} Stocks"
 
 #=========================================== CONSTANTS ===================================================#
 
 # --- Dashboard Tuning Constants ---
-TREND_PERIODS = [("Day", TR_PERIOD_DAY_SHORT), ("Week", TR_PERIOD_WEEK_SHORT), ("Month", TR_PERIOD_MONTH_SHORT), ("Year", TR_PERIOD_YEAR_SHORT)]
-PIE_PERIODS = [("Week", TR_PERIOD_WEEK_SHORT), ("Month", TR_PERIOD_MONTH_SHORT), ("Year", TR_PERIOD_YEAR_SHORT), ("All", TR_PERIOD_ALL_SHORT)]
+TREND_PERIODS = [("Day", "D"), ("Week", "W"), ("Month", "M"), ("Year", "Y")]
+PIE_PERIODS = [("Week", "W"), ("Month", "M"), ("Year", "Y"), ("All", "All")]
 
 DEFAULT_PERIODS = {
     "visits_info": "Month",
@@ -170,25 +115,25 @@ class DashboardPage(QWidget):
     
     def retranslate_ui(self):
         """Updates all static text on the dashboard when the language changes."""
-        self.next_appointment_title.setText(tr(TR_NEXT_APPOINTMENT_TITLE))
-        self.visits_info_card_title.setText(tr(TR_TOTAL_VISITS_TITLE))
-        self.total_revenue_card_title.setText(tr(TR_TOTAL_REVENUE_TITLE))
-        self.low_stock_card_title.setText(tr(TR_LOW_STOCK_SUPPLIES_TITLE))
-        self.avg_rev_card_title.setText(tr(TR_AVG_REVENUE_TITLE))
-        self.table_title.setText(tr(TR_APPOINTMENTS_TITLE))
+        self.next_appointment_title.setText(tr("Next Client Scheduled in"))
+        self.visits_info_card_title.setText(tr("Total Visits"))
+        self.total_revenue_card_title.setText(tr("Total Revenue"))
+        self.low_stock_card_title.setText(tr("Low Stock Supplies"))
+        self.avg_rev_card_title.setText(tr("Avg Revenue / Visit"))
+        self.table_title.setText(tr("Appointments"))
         for btn, label in getattr(self, 'period_buttons', []):
             btn.setText(tr(label))
         
         # Update Table Headers
-        self.upcoming_appointments_table.setHorizontalHeaderLabels([tr(TR_DATE_HEADER), tr(TR_SERVICE_HEADER), tr(TR_STATUS_HEADER)])
-        self.expiring_table.setHorizontalHeaderLabels([tr(TR_ITEM_HEADER), tr(TR_CATEGORY_HEADER), tr(TR_DATE_HEADER)])
-        self.top_selling_table.setHorizontalHeaderLabels([tr(TR_ITEM_HEADER), tr(TR_CATEGORY_HEADER), tr(TR_SOLD_HEADER)])
-        self.diagnosis_table.setHorizontalHeaderLabels([tr(TR_DIAGNOSIS_HEADER), tr(TR_COUNT_HEADER)])
+        self.upcoming_appointments_table.setHorizontalHeaderLabels([tr("Date"), tr("Service"), tr("Status")])
+        self.expiring_table.setHorizontalHeaderLabels([tr("Item"), tr("Category"), tr("Date")])
+        self.top_selling_table.setHorizontalHeaderLabels([tr("Item"), tr("Category"), tr("Sold")])
+        self.diagnosis_table.setHorizontalHeaderLabels([tr("Diagnosis"), tr("Count")])
         
         # Update Insight Table Titles
-        self.expiring_title.setText(f"<b>{tr(TR_EXPIRING_SOON_TITLE)}</b>")
-        self.top_selling_title.setText(f"<b>{tr(TR_TOP_SELLING_TITLE)}</b>")
-        self.diagnosis_title.setText(f"<b>{tr(TR_MONTHLY_DIAGNOSES_TITLE)}</b>")
+        self.expiring_title.setText(f"<b>{tr('Expiring Soon (30d)')}</b>")
+        self.top_selling_title.setText(f"<b>{tr('Top Selling Items')}</b>")
+        self.diagnosis_title.setText(f"<b>{tr('Monthly Diagnoses')}</b>")
         
         # Update period buttons (KPIs)
         # Since buttons are recreated or labels are simple keys like 'D', 'W', 
@@ -281,11 +226,11 @@ class DashboardPage(QWidget):
             
             status_item = QTableWidgetItem(tr(status))
             status_item.setTextAlignment(Qt.AlignCenter)
-            if status == TR_STATUS_PENDING:
+            if status == "Pending":
                 status_item.setForeground(palette.qcolor("state_warning"))
-            elif status == TR_STATUS_COMPLETED:
+            elif status == "Completed":
                 status_item.setForeground(palette.qcolor("state_success"))
-            elif status == TR_STATUS_CANCELED:
+            elif status == "Canceled":
                 status_item.setForeground(palette.qcolor("state_danger"))
             self.upcoming_appointments_table.setItem(row, 2, status_item)
     
@@ -308,6 +253,7 @@ class DashboardPage(QWidget):
         try:
             self._refresh_single_chart(period_key, new_period)
         except Exception:
+            # Fallback (shouldn't happen). Keep KPI/insights/appointments intact.
             # Fallback (shouldn't happen). Keep KPI/insights/appointments intact.
             self._refresh_charts_content()
         
@@ -345,7 +291,7 @@ class DashboardPage(QWidget):
         
         group = QButtonGroup(self)
         period_buttons = []
-        for period_name, label in [("Day", TR_PERIOD_DAY_SHORT), ("Week", TR_PERIOD_WEEK_SHORT), ("Month", TR_PERIOD_MONTH_SHORT), ("Year", TR_PERIOD_YEAR_SHORT), ("All", TR_PERIOD_ALL_SHORT)]:
+        for period_name, label in [("Day", "D"), ("Week", "W"), ("Month", "M"), ("Year", "Y"), ("All", "All")]:
             btn = QPushButton(tr(label))
             btn.setCheckable(True)
             btn.setFixedSize(*CARD_PERIOD_BUTTON_SIZE)
@@ -433,7 +379,7 @@ class DashboardPage(QWidget):
         self.status_widget.setMinimumHeight(80)
         self.status_layout = QHBoxLayout(self.status_widget)
         
-        self.next_appointment_title = QLabel(tr(TR_NEXT_APPOINTMENT_TITLE))
+        self.next_appointment_title = QLabel(tr("Next Client Scheduled in"))
         self.next_appointment_title.setProperty("class", "status-title")
         self.next_appointment_title.setAlignment(Qt.AlignAbsolute | Qt.AlignLeft | Qt.AlignVCenter)
         self.status_layout.addWidget(self.next_appointment_title)
@@ -451,11 +397,11 @@ class DashboardPage(QWidget):
         self.cards_layout = QHBoxLayout(self.cards_widget)
         
         card_visits, self.total_visits_value, self.visits_info_card_title = self._create_info_card_with_periods(
-            tr(TR_TOTAL_VISITS_TITLE), "visits_info", 
+            tr("Total Visits"), "visits_info", 
             lambda i, n, f: self._on_info_card_period_changed(i, n, f, analytics_repo.get_total_visits)
         )
         card_revenue, self.total_revenue_value, self.total_revenue_card_title = self._create_info_card_with_periods(
-            tr(TR_TOTAL_REVENUE_TITLE), "revenue_info", 
+            tr("Total Revenue"), "revenue_info", 
             lambda i, n, f: self._on_info_card_period_changed(i, n, f, analytics_repo.get_total_revenue, formatter=lambda v: f"${v:.2f}")
         )
         
@@ -468,7 +414,7 @@ class DashboardPage(QWidget):
         self.upcoming_appointments_table = QTableWidget()
         self.upcoming_appointments_table.setObjectName("dashboard_upcoming_appointments_table")
         self.upcoming_appointments_table.setColumnCount(3)
-        self.upcoming_appointments_table.setHorizontalHeaderLabels([tr(TR_DATE_HEADER), tr(TR_SERVICE_HEADER), tr(TR_STATUS_HEADER)])
+        self.upcoming_appointments_table.setHorizontalHeaderLabels([tr("Date"), tr("Service"), tr("Status")])
         self.upcoming_appointments_table.horizontalHeader().setStretchLastSection(True)
         self.upcoming_appointments_table.horizontalHeader().setSectionResizeMode(QHeaderView.Fixed)# disable columns resizing
         self.upcoming_appointments_table.horizontalHeader().setDefaultAlignment(Qt.AlignCenter)
@@ -486,7 +432,7 @@ class DashboardPage(QWidget):
         right_side_layout.setAlignment(Qt.AlignTop)
         right_side_layout.setSpacing(10)
         
-        self.table_title = QLabel(tr(TR_APPOINTMENTS_TITLE))
+        self.table_title = QLabel(tr("Appointments"))
         self.table_title.setObjectName("dashboard_upcoming_appointments_title")
         self.table_title.setFixedHeight(40)
         self.table_title.setAlignment(Qt.AlignCenter)
@@ -501,9 +447,9 @@ class DashboardPage(QWidget):
         self.second_row_layout.setContentsMargins(10, 0, 10, 10)
         self.second_row_layout.setSpacing(20)
         
-        card_supplies, self.low_stock_value, self.low_stock_card_title = self._create_kpi_card(tr(TR_LOW_STOCK_SUPPLIES_TITLE))
+        card_supplies, self.low_stock_value, self.low_stock_card_title = self._create_kpi_card(tr("Low Stock Supplies"))
         self.second_row_layout.addWidget(card_supplies)
-        card_avg_rev, self.avg_revenue_value, self.avg_rev_card_title = self._create_kpi_card(tr(TR_AVG_REVENUE_TITLE))
+        card_avg_rev, self.avg_revenue_value, self.avg_rev_card_title = self._create_kpi_card(tr("Avg Revenue / Visit"))
         self.second_row_layout.addWidget(card_avg_rev)
     
     def _third_row(self):
@@ -513,9 +459,9 @@ class DashboardPage(QWidget):
         self.third_row_layout.setContentsMargins(10, 0, 10, 10)
         self.third_row_layout.setSpacing(20)
         
-        exp_card, self.expiring_table, self.expiring_title = self._create_insight_table_card(tr(TR_EXPIRING_SOON_TITLE), [tr(TR_ITEM_HEADER), tr(TR_CATEGORY_HEADER), tr(TR_DATE_HEADER)])
-        top_card, self.top_selling_table, self.top_selling_title = self._create_insight_table_card(tr(TR_TOP_SELLING_TITLE), [tr(TR_ITEM_HEADER), tr(TR_CATEGORY_HEADER), tr(TR_SOLD_HEADER)])
-        diag_card, self.diagnosis_table, self.diagnosis_title = self._create_insight_table_card(tr(TR_MONTHLY_DIAGNOSES_TITLE), [tr(TR_DIAGNOSIS_HEADER), tr(TR_COUNT_HEADER)])
+        exp_card, self.expiring_table, self.expiring_title = self._create_insight_table_card(tr("Expiring Soon (30d)"), [tr("Item"), tr("Category"), tr("Date")])
+        top_card, self.top_selling_table, self.top_selling_title = self._create_insight_table_card(tr("Top Selling Items"), [tr("Item"), tr("Category"), tr("Sold")])
+        diag_card, self.diagnosis_table, self.diagnosis_title = self._create_insight_table_card(tr("Monthly Diagnoses"), [tr("Diagnosis"), tr("Count")])
         
         self.third_row_layout.addWidget(exp_card)
         self.third_row_layout.addWidget(top_card)
@@ -562,7 +508,7 @@ class DashboardPage(QWidget):
         
         if periods and period_key:
             group = QButtonGroup(container)
-            for p_name, label in periods: # periods already contains translated labels or TR_ constants
+            for p_name, label in periods: # periods already contains translated labels
                 btn = QPushButton(tr(label))
                 btn.setCheckable(True)
                 btn.setFixedSize(*CHART_PERIOD_BUTTON_SIZE)
@@ -610,9 +556,9 @@ class DashboardPage(QWidget):
         
         revenue_chart = SplineChart(
 
-            series_data=[   (list(range(len(rev_labels))), rev_vals, tr(TR_REVENUE_LABEL), palette.get("chart_revenue")),
-                            (list(range(len(rev_labels))), cost_vals, tr(TR_COSTS_LABEL), palette.get("chart_costs")),
-                            (list(range(len(rev_labels))), net_vals, tr(TR_NET_INCOME_LABEL), palette.get("chart_net"))
+            series_data=[   (list(range(len(rev_labels))), rev_vals, tr("Revenue"), palette.get("chart_revenue")),
+                            (list(range(len(rev_labels))), cost_vals, tr("Costs"), palette.get("chart_costs")),
+                            (list(range(len(rev_labels))), net_vals, tr("Net Income"), palette.get("chart_net"))
                             ],
             title="",
             x_axis_labels=rev_labels,
@@ -620,7 +566,7 @@ class DashboardPage(QWidget):
             line_width=3,
             palette=palette,
         )
-        self._add_chart_to_layout(self._create_chart_with_controls(tr(TR_REVENUE_TREND_TITLE), "revenue_chart", revenue_chart), revenue_chart, 0, 0, 1, 4)
+        self._add_chart_to_layout(self._create_chart_with_controls(tr("Revenue Trend"), "revenue_chart", revenue_chart), revenue_chart, 0, 0, 1, 4)
         
         # 2. Visits Trend Chart
         v_labels, v_vals = analytics_repo.get_trend_data('visits', self.periods["visits_chart"])
@@ -628,13 +574,13 @@ class DashboardPage(QWidget):
         
         visits_chart = LineChart(
 
-            series_data=[(list(range(len(v_labels))), v_vals, tr(TR_VISITS_LABEL))],
+            series_data=[(list(range(len(v_labels))), v_vals, tr("Visits"))],
             title="",
             x_axis_labels=v_labels,
             y_axis_range=(0, max(v_vals + [5]) * 1.2),
             palette=palette,
         )
-        self._add_chart_to_layout(self._create_chart_with_controls(tr(TR_VISITS_TREND_TITLE), "visits_chart", visits_chart, periods=TREND_PERIODS), visits_chart, 1, 0, 1, 3)
+        self._add_chart_to_layout(self._create_chart_with_controls(tr("Visits Trend"), "visits_chart", visits_chart, periods=TREND_PERIODS), visits_chart, 1, 0, 1, 3)
         
         
         # 4. Pet Distribution Pie Chart
@@ -645,7 +591,7 @@ class DashboardPage(QWidget):
             title="",
             palette=palette,
             )
-        self._add_chart_to_layout(self._create_chart_with_controls(tr(TR_PET_DISTRIBUTION_TITLE), "pets_chart", pets_chart, periods=PIE_PERIODS), pets_chart, 1, 3, 1, 1)
+        self._add_chart_to_layout(self._create_chart_with_controls(tr("Pet Distribution"), "pets_chart", pets_chart, periods=PIE_PERIODS), pets_chart, 1, 3, 1, 1)
         
         grid_start_row = 2
         
@@ -655,7 +601,7 @@ class DashboardPage(QWidget):
         supplies_sales_title_widget.setMinimumHeight(80)
         supplies_sales_title_layout = QHBoxLayout(supplies_sales_title_widget)
         
-        title_sales = QLabel(tr(TR_SUPPLIES_SALES_TITLE))
+        title_sales = QLabel(tr("Supplies Sales"))
         title_sales.setProperty("class", "section-title")
         title_sales.setAlignment(Qt.AlignCenter)
         supplies_sales_title_layout.addWidget(title_sales)
@@ -678,7 +624,7 @@ class DashboardPage(QWidget):
             y_axis_range=(0, max_s_val * 1.2),
             palette=palette,
         )
-        sales_chart_widget = self._create_chart_with_controls(tr(TR_SUPPLIES_SOLD_TREND_TITLE), "supplies_chart", supplies_trend_chart, periods=TREND_PERIODS)
+        sales_chart_widget = self._create_chart_with_controls(tr("Supplies Sold Trend"), "supplies_chart", supplies_trend_chart, periods=TREND_PERIODS)
         self.charts_layout.addWidget(sales_chart_widget, grid_start_row + 1, 0, 1, 4)
         
         categories = supply_repo.get_all_categories()
@@ -706,7 +652,7 @@ class DashboardPage(QWidget):
             
             row = (grid_start_row + 2) + (index // 2)
             col = (index % 2) * 2
-            sales_title = tr(TR_CATEGORY_SALES_TITLE).format(category=tr(category))
+            sales_title = tr("{category} Sales").format(category=tr(category))
             self._add_chart_to_layout(self._create_chart_with_controls(sales_title, period_key, sub_chart, periods=TREND_PERIODS), sub_chart, row, col, 1, 2)
             
         stock_start_row = grid_start_row + 2 + num_sales_rows
@@ -717,7 +663,7 @@ class DashboardPage(QWidget):
         supplies_title_widget.setMinimumHeight(80)
         supplies_title_layout = QHBoxLayout(supplies_title_widget)
         
-        title_label = QLabel(tr(TR_SUPPLIES_STOCK_TITLE))
+        title_label = QLabel(tr("Supplies Stock"))
         title_label.setProperty("class", "section-title")
         title_label.setAlignment(Qt.AlignCenter)
         supplies_title_layout.addWidget(title_label)
@@ -734,11 +680,11 @@ class DashboardPage(QWidget):
             x_labels=x_labels_total,
             y_values=y_values_total,
             title="", 
-            series_name=tr(TR_TOTAL_QUANTITY_LABEL),
+            series_name=tr("Total Quantity"),
             rotate_x_labels=False, # Explicitly disable rotation for this categorical bar chart
             palette=palette,
         )
-        chart_widget = self._create_chart_with_controls(tr(TR_TOTAL_SUPPLIES_TITLE), None, total_supplies_chart, periods=[]) # No period controls for this chart
+        chart_widget = self._create_chart_with_controls(tr("Total Supplies by Category"), None, total_supplies_chart, periods=[]) # No period controls for this chart
         self.charts_layout.addWidget(chart_widget, stock_start_row + 1, 0, 1, 4)
         
         # Adjust the starting row for individual category charts
@@ -753,11 +699,11 @@ class DashboardPage(QWidget):
                     x_labels=x_labels,
                     y_values=y_values,
                     title="", # Move title to external header
-                    series_name=tr(TR_QUANTITY_LABEL),
+                    series_name=tr("Quantity"),
                     rotate_x_labels=False, # Explicitly disable rotation for these categorical bar charts
                     palette=palette,
                 )
-                stock_title = tr(TR_CATEGORY_STOCKS_TITLE).format(category=tr(category))
+                stock_title = tr("{category} Stocks").format(category=tr(category))
                 chart_widget = self._create_chart_with_controls(stock_title, None, chart, periods=[])
                 row = individual_charts_start_row + (index // 2)
                 col = (index % 2) * 2 # Place charts in two columns
@@ -843,9 +789,9 @@ class DashboardPage(QWidget):
             chart = SplineChart(
 
                 series_data=[
-                    (list(range(len(x_labels))), rev_vals, tr(TR_REVENUE_LABEL), palette.get("chart_revenue")),
-                    (list(range(len(x_labels))), cost_vals, tr(TR_COSTS_LABEL), palette.get("chart_costs")),
-                    (list(range(len(x_labels))), net_vals, tr(TR_NET_INCOME_LABEL), palette.get("chart_net")),
+                    (list(range(len(x_labels))), rev_vals, tr("Revenue"), palette.get("chart_revenue")),
+                    (list(range(len(x_labels))), cost_vals, tr("Costs"), palette.get("chart_costs")),
+                    (list(range(len(x_labels))), net_vals, tr("Net Income"), palette.get("chart_net")),
                 ],
                 title="",
                 x_axis_labels=x_labels,
@@ -853,7 +799,7 @@ class DashboardPage(QWidget):
                 line_width=3,
                 palette=palette,
             )
-            container = self._create_chart_with_controls(tr(TR_REVENUE_TREND_TITLE), period_key, chart)
+            container = self._create_chart_with_controls(tr("Revenue Trend"), period_key, chart)
             self._add_chart_to_layout(container, chart, row, col, row_span, col_span)
             return
 
@@ -862,13 +808,13 @@ class DashboardPage(QWidget):
             x_labels = [tr(label) for label in labels]
             chart = LineChart(
 
-                series_data=[(list(range(len(x_labels))), vals, tr(TR_VISITS_LABEL))],
+                series_data=[(list(range(len(x_labels))), vals, tr("Visits"))],
                 title="",
                 x_axis_labels=x_labels,
                 y_axis_range=(0, max(vals + [5]) * 1.2),
                 palette=palette,
             )
-            container = self._create_chart_with_controls(tr(TR_VISITS_TREND_TITLE), period_key, chart, periods=TREND_PERIODS)
+            container = self._create_chart_with_controls(tr("Visits Trend"), period_key, chart, periods=TREND_PERIODS)
             self._add_chart_to_layout(container, chart, row, col, row_span, col_span)
             return
 
@@ -890,7 +836,7 @@ class DashboardPage(QWidget):
                 y_axis_range=(0, max_s_val * 1.2),
                 palette=palette,
             )
-            container = self._create_chart_with_controls(tr(TR_SUPPLIES_SOLD_TREND_TITLE), period_key, chart, periods=TREND_PERIODS)
+            container = self._create_chart_with_controls(tr("Supplies Sold Trend"), period_key, chart, periods=TREND_PERIODS)
             self._add_chart_to_layout(container, chart, row, col, row_span, col_span)
             return
 
@@ -902,7 +848,7 @@ class DashboardPage(QWidget):
                 title="",
                 palette=palette,
             )
-            container = self._create_chart_with_controls(tr(TR_PET_DISTRIBUTION_TITLE), period_key, chart, periods=PIE_PERIODS)
+            container = self._create_chart_with_controls(tr("Pet Distribution"), period_key, chart, periods=PIE_PERIODS)
             self._add_chart_to_layout(container, chart, row, col, row_span, col_span)
             return
 
@@ -931,7 +877,7 @@ class DashboardPage(QWidget):
                 y_axis_range=(0, sub_max_y * 1.2),
                 palette=palette,
             )
-            title = tr(TR_CATEGORY_SALES_TITLE).format(category=tr(category))
+            title = tr("{category} Sales").format(category=tr(category))
             container = self._create_chart_with_controls(title, period_key, chart, periods=TREND_PERIODS)
             self._add_chart_to_layout(container, chart, row, col, row_span, col_span)
             return

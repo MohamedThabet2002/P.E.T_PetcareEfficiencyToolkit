@@ -9,11 +9,6 @@ import src.core.repositories.client_repo as client_repo
 import src.core.repositories.pet_repo as pet_repo
 import src.core.repositories.visit_repo as visit_repo
 
-#============================== TRANSLATABLE STRINGS ===================================================#
-
-TR_CLIENT_CREATION_ERROR = "Failed to create or identify client."
-TR_PET_CREATION_ERROR = "Failed to create or update pet."
-
 #============================================== CODE =====================================================#
 
 def process_full_clinical_entry(owner_data, pet_data, visit_data, items=None):
@@ -41,7 +36,7 @@ def process_full_clinical_entry(owner_data, pet_data, visit_data, items=None):
         client_repo.update_client(client_id, owner_name, owner_data['new_phone'])
     
     if not client_id:
-        return False, TR_CLIENT_CREATION_ERROR
+        return False, "Failed to create or identify client."
     
     # --- 2. Pet Handling ---
     pet_id = None
@@ -59,7 +54,7 @@ def process_full_clinical_entry(owner_data, pet_data, visit_data, items=None):
             pet_id = pet_repo.add_pet(pet_name, species, breed, gender, age, weight, client_id)
     
         if not pet_id:
-            return False, TR_PET_CREATION_ERROR
+            return False, "Failed to create or update pet."
     
     # --- 3. Visit Handling ---
     result = visit_repo.add_visit(

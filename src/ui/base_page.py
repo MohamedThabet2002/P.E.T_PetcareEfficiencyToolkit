@@ -17,7 +17,7 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import pyqtSignal, QTimer, QSize, Qt
 from PyQt5.QtGui import QIcon
 
-from src.config import ICONS_DIR, TR_ADD, TR_SEARCH, TR_DELETE_SELECTED
+from src.config import ICONS_DIR
 from src.utils.i18n import tr
 
 #=========================================== CONSTANTS ===================================================#
@@ -72,9 +72,9 @@ class BaseEntityPage(QWidget):
         controls = QHBoxLayout()
         controls.setSpacing(0)
         
-        add_btn = QPushButton(f"{tr(TR_ADD)} {tr(name)}")
+        add_btn = QPushButton(f"{tr('Add')} {tr(name)}")
         search_bar = QLineEdit()
-        search_bar.setPlaceholderText(f"{tr(TR_SEARCH)} {tr(name)}...")
+        search_bar.setPlaceholderText(f"{tr('Search')} {tr(name)}...")
         search_bar.setProperty("action", "search")
         
         search_clear_btn = QPushButton()
@@ -97,7 +97,7 @@ class BaseEntityPage(QWidget):
         filter_combo.lineEdit().setTextMargins(-2, 0, -6, 0)  # Align text inside the combo
 
         
-        delete_btn = QPushButton(tr(TR_DELETE_SELECTED))
+        delete_btn = QPushButton(tr('Delete Selected'))
         
         # Populate layout with a spacer to separate Add/Search from Delete
         controls.addWidget(add_btn)
@@ -165,9 +165,9 @@ class BaseEntityPage(QWidget):
             translated_name = tr(name_key)
             
             self.tabs.setTabText(i, translated_name)
-            cfg["add_btn"].setText(f"{tr(TR_ADD)} {translated_name}")
-            cfg["delete_btn"].setText(tr(TR_DELETE_SELECTED))
-            cfg["search_bar"].setPlaceholderText(f"{tr(TR_SEARCH)} {translated_name}...")
+            cfg["add_btn"].setText(f"{tr('Add')} {translated_name}")
+            cfg["delete_btn"].setText(tr('Delete Selected'))
+            cfg["search_bar"].setPlaceholderText(f"{tr('Search')} {translated_name}...")
             
             # Refresh Filter Combo
             combo = cfg["filter_combo"]

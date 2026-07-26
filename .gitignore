@@ -16,7 +16,7 @@ vc_redist.x64.exe
 vc_redist.x86.exe
 
 # Local User Data & Logs
-Database.db
+# Database.db
 app.log
 settings.json
 backups/

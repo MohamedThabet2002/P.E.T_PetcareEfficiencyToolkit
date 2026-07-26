@@ -42,15 +42,6 @@ logger = logging.getLogger(__name__)
 #============================== TRANSLATABLE STRINGS ===================================================#
 
 STRINGS = {
-    "UI_OK": "OK",
-    "UI_CANCEL": "Cancel",
-    "MENU_REORDER": "Reorder Levels",
-    "MENU_SETTINGS": "Settings",
-    "GREETING_HELLO": "Hello, {name}",
-    "GREETING_GOOD": "Good {time}!",
-    "TIME_MORNING": "morning",
-    "TIME_AFTERNOON": "afternoon",
-    "TIME_EVENING": "evening",
     "LOG_UI_UPDATE": "UI language updated to '{lang}'",
     "LOG_TRANS_FAIL": "Failed to reload translations",
     "LOG_STYLE_RELOAD": "Stylesheet reloaded via shortcut at {time}",
@@ -141,10 +132,10 @@ def get_time_of_day():
     """Returns the current period of the day for greeting message."""
     hour = datetime.now().hour
     if hour < GREETING_AFTERNOON_HOUR:
-        return STRINGS["TIME_MORNING"]
+        return "morning"
     elif hour < GREETING_EVENING_HOUR:
-        return STRINGS["TIME_AFTERNOON"]
-    return STRINGS["TIME_EVENING"]
+        return "afternoon"
+    return "evening"
 
 #============================================== CODE =====================================================#
 
@@ -550,12 +541,12 @@ class MainPage(QWidget):
         account_name = SettingsManager.get("user_name", DEFAULT_CLINIC_OWNER)
         self.welcome_layout = QVBoxLayout()
         
-        self.welcome = QLabel(tr(STRINGS["GREETING_HELLO"]).format(name=account_name))
+        self.welcome = QLabel(tr("Hello, {name}").format(name=account_name))
         self.welcome.setObjectName("welcomeLabel")
         self.welcome.setAlignment(Qt.AlignCenter)
         self.welcome_layout.addWidget(self.welcome)
         
-        self.state = QLabel(tr(STRINGS["GREETING_GOOD"]).format(time=tr(get_time_of_day())))
+        self.state = QLabel(tr("Good {time}!").format(time=tr(get_time_of_day())))
         self.state.setObjectName("stateLabel")
         self.state.setAlignment(Qt.AlignCenter)
         self.welcome_layout.addWidget(self.state)
@@ -593,16 +584,16 @@ class MainPage(QWidget):
         account_drop_down_menu = QMenu(self)
         account_drop_down_menu.setAttribute(Qt.WA_TranslucentBackground)
         account_drop_down_menu.setWindowFlags(account_drop_down_menu.windowFlags() | Qt.FramelessWindowHint | Qt.NoDropShadowWindowHint)
-        account_drop_down_menu.addAction(tr(STRINGS["MENU_REORDER"]), self.show_reorder_settings)
-        account_drop_down_menu.addAction(tr(STRINGS["MENU_SETTINGS"]), self.show_settings_window)
+        account_drop_down_menu.addAction(tr("Reorder Levels"), self.show_reorder_settings)
+        account_drop_down_menu.addAction(tr("Settings"), self.show_settings_window)
 
         self.account_btn.setMenu(account_drop_down_menu)
     
     def retranslate_ui(self):
         """Updates the status bar text and action menus when language changes."""
         account_name = SettingsManager.get("user_name", DEFAULT_CLINIC_OWNER)
-        self.welcome.setText(tr(STRINGS["GREETING_HELLO"]).format(name=account_name))
-        self.state.setText(tr(STRINGS["GREETING_GOOD"]).format(time=tr(get_time_of_day())))
+        self.welcome.setText(tr("Hello, {name}").format(name=account_name))
+        self.state.setText(tr("Good {time}!").format(time=tr(get_time_of_day())))
 
         # Refresh Icons with current palette
         palette = get_active_palette()
@@ -622,8 +613,8 @@ class MainPage(QWidget):
         if menu:
             actions = menu.actions()
             if len(actions) >= 2:
-                actions[0].setText(tr(STRINGS["MENU_REORDER"]))
-                actions[1].setText(tr(STRINGS["MENU_SETTINGS"]))
+                actions[0].setText(tr("Reorder Levels"))
+                actions[1].setText(tr("Settings"))
 
 
         # Propagate to all pages in the stacked widget

@@ -10,53 +10,10 @@ from PyQt5.QtSql import QSqlQuery
 
 from src.core.database import get_connection
 
-_SCHEMA_VERIFIED = False
-
 # --- CRUD Operations ---
-
-def _ensure_schema():
-    """Ensures category tables exist."""
-    global _SCHEMA_VERIFIED
-    if _SCHEMA_VERIFIED:
-        return
-
-    db = get_connection()
-    query = QSqlQuery(db)
-
-    # Create categories table (for dynamic categorization)
-    query.exec("""
-        CREATE TABLE IF NOT EXISTS categories (
-            name TEXT PRIMARY KEY
-        )
-    """)
-
-    # Create subcategories table
-    query.exec("""
-        CREATE TABLE IF NOT EXISTS subcategories (
-            category_name TEXT,
-            sub_name TEXT,
-            PRIMARY KEY (category_name, sub_name),
-            FOREIGN KEY (category_name) REFERENCES categories(name) ON DELETE CASCADE
-        )
-    """)
-
-    # Migration: If categories table is empty, seed it from existing supplies
-    check_q = QSqlQuery(db)
-    if check_q.exec("SELECT COUNT(*) FROM categories") and check_q.next():
-        if check_q.value(0) == 0:
-            query.exec("INSERT OR IGNORE INTO categories (name) SELECT DISTINCT category FROM supplies WHERE category IS NOT NULL")
-            query.exec("""
-                INSERT OR IGNORE INTO subcategories (category_name, sub_name)
-                SELECT DISTINCT category, sub_category FROM supplies
-                WHERE category IS NOT NULL AND sub_category IS NOT NULL
-            """)
-
-    _SCHEMA_VERIFIED = True
-
 
 def get_all_categories():
     """Retrieves all defined inventory categories from the database."""
-    _ensure_schema()
     db = get_connection()
     query = QSqlQuery(db)
     results = []

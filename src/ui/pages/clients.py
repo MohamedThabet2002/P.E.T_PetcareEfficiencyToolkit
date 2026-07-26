@@ -10,12 +10,6 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import Qt, QDateTime
 from PyQt5.QtGui import QColor
 
-from src.config import (
-    TR_ALL_FILTER_OPTION, TR_OWNER_NAME_LABEL, TR_PHONE_LABEL, TR_PET_NAME_LABEL, TR_SPECIES_LABEL, TR_BREED_LABEL, TR_GENDER_LABEL,
-    TR_AGE_MONTHS_LABEL, TR_WEIGHT_LABEL, TR_OWNER_SELECT_LABEL, TR_OK, TR_CANCEL, TR_DATABASE_ERROR_HEADING,TR_CLIENT_ID, TR_ID, TR_VISIT_ID, TR_DATE,
-    TR_DIAGNOSIS, TR_CONSULT, TR_NOTES, TR_RECEIPT_ID, TR_SPECIES, TR_BREED, TR_GENDER, TR_AGE, TR_WEIGHT, TR_SERVICE, TR_STATUS, TR_OTHER, TR_FEMALE, TR_MALE,
-    TR_VISIT_ID, TR_DATE, TR_DIAGNOSIS, TR_CONSULT, TR_NOTES, TR_RECEIPT_ID, TR_OTHER, TR_FEMALE, TR_MALE, TR_OWNER_NAME, TR_PHONE, TR_PET_NAME,
-)
 from src.utils.i18n import tr
 import src.core.repositories.client_repo as client_repo
 import src.core.repositories.pet_repo as pet_repo
@@ -27,75 +21,13 @@ from src.ui.themes.color_palettes import get_active_palette, ThemeManager
 from src.ui.base_page import BaseEntityPage
 from src.ui.dialogs.clinical_dialogs import AddVisitDialog, EditVisitDialog
 
-#=========================================== TRANSLATIONS STRINGS ===================================================#
-
-
-TR_PET_LABEL = "Pet:"
-TR_ADD_CLIENT_TITLE = "Add Client"
-TR_INPUT_ERROR_HEADING = "Input Error"
-TR_OWNER_REQUIRED_MSG = "Owner name is required."
-TR_OWNER_ALREADY_RECORDED_MSG = "Owner is already recorded."
-
-TR_ADD_PET_TITLE = "Add Pet"
-
-
-TR_PET_OWNER_REQUIRED_MSG = "Owner selection is required."
-TR_PET_NAME_REQUIRED_MSG = "Pet name is required."
-TR_PET_ALREADY_RECORDED_MSG = "Pet is already recorded."
-TR_EDIT_PET_TITLE = "Edit Pet: {name}"
-TR_OWNER_LABEL = "Owner:"
-
-TR_ADD_APPOINTMENT_TITLE = "Add Appointment"
-TR_APPOINTMENT_DATE_LABEL = "Appointment Date:"
-TR_SERVICE_LABEL = "Service:"
-TR_STATUS_LABEL = "Status:"
-TR_NOTES_LABEL = "Notes:"
-TR_SELECT_CLIENT_LABEL = "Select Client*:"
-TR_SELECT_PET_LABEL = "Select Pet:"
-TR_APPOINTMENT_CLIENT_REQUIRED_MSG = "Please select a client for the appointment."
-TR_EDIT_APPOINTMENT_TITLE = "Edit Appointment"
-TR_DATE_LABEL = "Date:"
-TR_SERVICE_PLACEHOLDER = "Consultation"
-TR_SELECT_OWNER_PLACEHOLDER = "Select Owner..."
-TR_SELECT_CLIENT_PLACEHOLDER = "Select Client..."
-TR_SELECT_PET_PLACEHOLDER = "Select Pet..."
-
-
-TR_UPDATE_CLIENT_ERROR_MSG = "Could not update client."
-TR_INFO_TITLE = "Information"
-TR_NO_SELECTION_TITLE = "No Selection"
-TR_SELECT_ENTITY_DELETE_MSG = "Please select a {label} to delete."
-TR_CONFIRM_DELETE_TITLE = "Confirm Delete"
-TR_CONFIRM_DELETE_QUESTION = "Are you sure you want to delete {label} '{entity_name}'?"
-TR_DUPLICATE_FOUND_TITLE = "Duplicate Found"
-TR_DUPLICATE_PET_MSG = "There is a pet already with the same data but different age or weight. Do you want to update the current record?"
-TR_DUPLICATE_PET_FOUND_TITLE = "Duplicate Pet Found"
-TR_EDIT_CLIENT_TITLE = "Edit Client: {name}"
-TR_CLIENT_NAME_HEADER = "Client Name"
-# Common Options
-TR_DOG = "Dog"
-TR_CAT = "Cat"
-
-
-TR_PENDING = "Pending"
-TR_COMPLETED = "Completed"
-TR_CANCELED = "Canceled"
-
-
-TR_CONSULTATION = "Consultation"
-TR_VACCINATION = "Vaccination"
-TR_CHECKUP = "Check-up"
-TR_GROOMING = "Grooming"
-TR_SURGERY = "Surgery"
-
 #=========================================== CONSTANTS ===================================================#
 
 # --- Page Configuration Constants ---
 
-TR_SPECIES_OPTIONS = [TR_DOG, TR_CAT, TR_OTHER]
-TR_GENDER_OPTIONS = [TR_FEMALE, TR_MALE, TR_OTHER]
-TR_STATUS_OPTIONS = [TR_PENDING, TR_COMPLETED, TR_CANCELED]
-DEFAULT_SERVICES = [TR_CONSULTATION, TR_VACCINATION, TR_CHECKUP, TR_GROOMING, TR_SURGERY]
+GENDER_OPTIONS = ["Female", "Male", "Other"]
+STATUS_OPTIONS = ["Pending", "Completed", "Canceled"]
+DEFAULT_SERVICES = ["Consultation", "Vaccination", "Check-up", "Grooming", "Surgery"]
 
 DIALOG_CONFIG = {
     "client": (400, 150), # Width, Height
@@ -105,28 +37,28 @@ DIALOG_CONFIG = {
 
 CLIENTS_TAB_CONFIG = {
     "Clients": {
-        "headers": [TR_CLIENT_ID, TR_OWNER_NAME, TR_PHONE],
+        "headers": ["Client ID", "Owner Name", "Phone Number"],
         "hide": [0], # Client ID
         "col_widths":[0, 250, 150], # Client ID, Owner Name, Phone
-        "filter": [TR_ALL_FILTER_OPTION, TR_OWNER_NAME, TR_PHONE]
+        "filter": ["All", "Owner Name", "Phone Number"]
     },
     "Pets": {
-        "headers": [TR_ID, TR_PET_NAME, TR_SPECIES, TR_BREED, TR_GENDER, TR_AGE, TR_WEIGHT],
+        "headers": ["ID", "Pet Name", "Species", "Breed", "Gender", "Age", "Weight"],
         "hide": [0], # Pet ID
         "col_widths":[0, 150, 100, 150, 80, 100, 100], # Pet ID, Pet Name, Species, Breed, Gender, Age, Weight
-        "filter": [TR_ALL_FILTER_OPTION, TR_PET_NAME, TR_SPECIES, TR_BREED, TR_GENDER, TR_AGE, TR_WEIGHT]
+        "filter": ["All", "Pet Name", "Species", "Breed", "Gender", "Age", "Weight"]
     },
     "Visits": {
-        "headers": [TR_VISIT_ID, TR_DATE, TR_OWNER_NAME, TR_PET_NAME, TR_DIAGNOSIS, TR_CONSULT, TR_NOTES, TR_ID, TR_RECEIPT_ID],
+        "headers": ["Visit ID", "Date", "Owner Name", "Pet Name", "Diagnosis", "Consult", "Notes", "ID", "Receipt ID"],
         "hide": [0, 7], # Visit ID, Pet ID
         "col_widths":[0, 150, 180, 150, 150, 100, 350, 0, 100], # Visit ID, Date, Owner, Pet, Diag, Consult, Notes, Pet ID, Receipt ID
-        "filter": [TR_ALL_FILTER_OPTION, TR_DATE, TR_OWNER_NAME, TR_PET_NAME, TR_DIAGNOSIS, TR_CONSULT, TR_NOTES]
+        "filter": ["All", "Date", "Owner Name", "Pet Name", "Diagnosis", "Consult", "Notes"]
     },
     "Appointments": {
-        "headers": [TR_ID, TR_DATE, TR_OWNER_NAME, TR_PET_NAME, TR_SERVICE, TR_STATUS, TR_NOTES, TR_CLIENT_ID, TR_ID],
+        "headers": ["ID", "Date", "Owner Name", "Pet Name", "Service", "Status", "Notes", "Client ID", "ID"],
         "hide": [0, 7, 8], # Appointment ID, Client ID, Pet ID
         "col_widths":[0, 160, 180, 150, 200, 100, 200], # Appointment ID, Appointment Date, Client Name, Pet Name, Service, Status, Notes
-        "filter": [TR_ALL_FILTER_OPTION, TR_DATE, TR_OWNER_NAME, TR_PET_NAME, TR_SERVICE, TR_STATUS, TR_NOTES, TR_CLIENT_ID]
+        "filter": ["All", "Date", "Owner Name", "Pet Name", "Service", "Status", "Notes", "Client ID"]
     }
 }
 
@@ -255,15 +187,15 @@ class ClientsPage(BaseEntityPage):
         table = self.tables[tab_name]
         row = table.currentRow()
         if row < 0:
-            QMessageBox.information(self, tr(TR_NO_SELECTION_TITLE), tr(TR_SELECT_ENTITY_DELETE_MSG).format(label=tr(label)))
+            QMessageBox.information(self, tr("No Selection"), tr("Please select a {label} to delete.").format(label=tr(label)))
             return
             
         entity_id = table.item(row, id_col).text()
         entity_name = table.item(row, name_col).text()
         
         reply = QMessageBox.question(
-            self, tr(TR_CONFIRM_DELETE_TITLE),
-            tr(TR_CONFIRM_DELETE_QUESTION).format(label=tr(label), entity_name=entity_name),
+            self, tr("Confirm Delete"),
+            tr("Are you sure you want to delete {label} '{entity_name}'?").format(label=tr(label), entity_name=entity_name),
             QMessageBox.Yes | QMessageBox.No, QMessageBox.No
         )
         
@@ -282,26 +214,26 @@ class ClientsPage(BaseEntityPage):
         current_phone = table.item(row, 2).text()
         
         dialog = QDialog(self)
-        dialog.setWindowTitle(tr(TR_EDIT_CLIENT_TITLE).format(name=current_name))
+        dialog.setWindowTitle(tr("Edit Client: {name}").format(name=current_name))
         dialog.setFixedSize(*DIALOG_CONFIG["client"])
         layout = QFormLayout(dialog)
         
         owner_name = QLineEdit(current_name)
         phone_number = QLineEdit(current_phone)
         
-        layout.addRow(tr(TR_OWNER_NAME_LABEL), owner_name)
-        layout.addRow(tr(TR_PHONE_LABEL), phone_number)
+        layout.addRow(tr("Owner Name*:"), owner_name)
+        layout.addRow(tr("Phone Number:"), phone_number)
         
         buttons = QDialogButtonBox()
-        ok_button = buttons.addButton(tr(TR_OK), QDialogButtonBox.AcceptRole)
-        cancel_button = buttons.addButton(tr(TR_CANCEL), QDialogButtonBox.RejectRole)
+        ok_button = buttons.addButton(tr("OK"), QDialogButtonBox.AcceptRole)
+        cancel_button = buttons.addButton(tr("Cancel"), QDialogButtonBox.RejectRole)
         
         def handle_save():
             new_name = owner_name.text().strip().title()
             new_phone = phone_number.text().strip()
             
             if not new_name:
-                QMessageBox.warning(dialog, tr(TR_INPUT_ERROR_HEADING), tr(TR_OWNER_REQUIRED_MSG))
+                QMessageBox.warning(dialog, tr("Input Error"), tr("Owner name is required."))
                 return
             
             if client_repo.update_client(client_id, new_name, new_phone):
@@ -309,7 +241,7 @@ class ClientsPage(BaseEntityPage):
                 self.data_changed.emit()
                 dialog.accept()
             else:
-                QMessageBox.critical(dialog, tr(TR_DATABASE_ERROR_HEADING), tr(TR_UPDATE_CLIENT_ERROR_MSG))
+                QMessageBox.critical(dialog, tr("Database Error"), tr("Could not update client."))
         
         layout.addWidget(buttons)
         buttons.accepted.connect(handle_save)
@@ -319,25 +251,25 @@ class ClientsPage(BaseEntityPage):
     def add_client_dialog(self):
         """Opens dialog to add a new client."""
         dialog = QDialog(self)
-        dialog.setWindowTitle(tr(TR_ADD_CLIENT_TITLE))
+        dialog.setWindowTitle(tr("Add Client"))
         dialog.setFixedSize(*DIALOG_CONFIG["client"])
         layout = QFormLayout(dialog)
         
         owner_name = QLineEdit()
         phone_number = QLineEdit()
         
-        layout.addRow(tr(TR_OWNER_NAME_LABEL), owner_name)
-        layout.addRow(tr(TR_PHONE_LABEL), phone_number)
+        layout.addRow(tr("Owner Name*:"), owner_name)
+        layout.addRow(tr("Phone Number:"), phone_number)
         
         buttons = QDialogButtonBox()
-        ok_button = buttons.addButton(tr(TR_OK), QDialogButtonBox.AcceptRole)
-        cancel_button = buttons.addButton(tr(TR_CANCEL), QDialogButtonBox.RejectRole)
+        ok_button = buttons.addButton(tr("OK"), QDialogButtonBox.AcceptRole)
+        cancel_button = buttons.addButton(tr("Cancel"), QDialogButtonBox.RejectRole)
         
         def handle_accept():
             name_input = owner_name.text().strip()
             phone_input = phone_number.text().strip()
             if not name_input:
-                QMessageBox.warning(dialog, tr(TR_INPUT_ERROR_HEADING), tr(TR_OWNER_REQUIRED_MSG))
+                QMessageBox.warning(dialog, tr("Input Error"), tr("Owner name is required."))
                 return
             
             formatted_name = name_input.title()
@@ -346,7 +278,7 @@ class ClientsPage(BaseEntityPage):
             existing_clients = client_repo.get_clients_by_name_exact(formatted_name)
             for client in existing_clients:
                 if client['phone_number'] == phone_input:
-                    QMessageBox.information(dialog, tr(TR_INFO_TITLE), tr(TR_OWNER_ALREADY_RECORDED_MSG))
+                    QMessageBox.information(dialog, tr("Information"), tr("Owner is already recorded."))
                     return
 
             client_repo.add_client(formatted_name, phone_input)
@@ -378,12 +310,12 @@ class ClientsPage(BaseEntityPage):
     def add_pet_dialog(self):
         """Opens dialog to add a new pet."""
         dialog = QDialog(self)
-        dialog.setWindowTitle(tr(TR_ADD_PET_TITLE))
+        dialog.setWindowTitle(tr("Add Pet"))
         dialog.setFixedSize(*DIALOG_CONFIG["pet"])
         layout = QFormLayout(dialog)
         
         pet_name = QLineEdit()
-        species = QComboBox() # Use tr() on individual items
+        species = QComboBox()
         species.setView(QListView())
         species.view().window().setAttribute(Qt.WA_TranslucentBackground)
         species.view().window().setWindowFlags(Qt.Popup | Qt.FramelessWindowHint | Qt.NoDropShadowWindowHint)
@@ -394,11 +326,11 @@ class ClientsPage(BaseEntityPage):
         breed_completer.setCaseSensitivity(Qt.CaseInsensitive)
         breed.setCompleter(breed_completer)
         
-        gender = QComboBox() # Use tr() on individual items
+        gender = QComboBox()
         gender.view().window().setAttribute(Qt.WA_TranslucentBackground)
         gender.view().window().setWindowFlags(Qt.Popup | Qt.FramelessWindowHint | Qt.NoDropShadowWindowHint)
         gender.setView(QListView())
-        gender.addItems([tr(g) for g in TR_GENDER_OPTIONS])
+        gender.addItems([tr(g) for g in GENDER_OPTIONS])
         age_months = QSpinBox()
         age_months.setMaximum(600)
         weight = QDoubleSpinBox()
@@ -411,23 +343,23 @@ class ClientsPage(BaseEntityPage):
         client_selector.setEditable(True)
         client_selector.setInsertPolicy(QComboBox.NoInsert)
         client_selector.completer().setFilterMode(Qt.MatchContains)
-        client_selector.setPlaceholderText(tr(TR_SELECT_OWNER_PLACEHOLDER))
+        client_selector.setPlaceholderText(tr("Select Owner..."))
         clients = client_repo.get_clients()
         for c in clients:
             client_selector.addItem(c["owner_name"], c["client_id"])
         client_selector.setCurrentIndex(-1)
         
-        layout.addRow(tr(TR_PET_NAME_LABEL), pet_name)
-        layout.addRow(tr(TR_SPECIES_LABEL), species)
-        layout.addRow(tr(TR_BREED_LABEL), breed)
-        layout.addRow(tr(TR_GENDER_LABEL), gender)
-        layout.addRow(tr(TR_AGE_MONTHS_LABEL), age_months)
-        layout.addRow(tr(TR_WEIGHT_LABEL), weight)
-        layout.addRow(tr(TR_OWNER_SELECT_LABEL), client_selector)
+        layout.addRow(tr("Pet Name*:"), pet_name)
+        layout.addRow(tr("Species:"), species)
+        layout.addRow(tr("Breed:"), breed)
+        layout.addRow(tr("Gender:"), gender)
+        layout.addRow(tr("Age (Months):"), age_months)
+        layout.addRow(tr("Weight (kg):"), weight)
+        layout.addRow(tr("Owner*:"), client_selector)
         
         buttons = QDialogButtonBox()
-        ok_button = buttons.addButton(tr(TR_OK), QDialogButtonBox.AcceptRole)
-        cancel_button = buttons.addButton(tr(TR_CANCEL), QDialogButtonBox.RejectRole)
+        ok_button = buttons.addButton(tr("OK"), QDialogButtonBox.AcceptRole)
+        cancel_button = buttons.addButton(tr("Cancel"), QDialogButtonBox.RejectRole)
         
         def handle_accept():
             selected_client_id = client_selector.currentData()
@@ -439,11 +371,11 @@ class ClientsPage(BaseEntityPage):
             weight_val = weight.value()
             
             if not name_val:
-                QMessageBox.warning(dialog, tr(TR_INPUT_ERROR_HEADING), tr(TR_PET_NAME_REQUIRED_MSG))
+                QMessageBox.warning(dialog, tr("Input Error"), tr("Pet name is required."))
                 return
             
             if selected_client_id is None:
-                QMessageBox.warning(dialog, tr(TR_INPUT_ERROR_HEADING), tr(TR_PET_OWNER_REQUIRED_MSG))
+                QMessageBox.warning(dialog, tr("Input Error"), tr("Owner selection is required."))
                 return
             
             # Check for duplicate pet
@@ -452,12 +384,12 @@ class ClientsPage(BaseEntityPage):
             if existing:
                 # Check if age or weight is different
                 if age_val != existing["age_months"] or weight_val != existing["weight"]:
-                    msg = tr(TR_DUPLICATE_PET_MSG)
-                    reply = QMessageBox.question(dialog, tr(TR_DUPLICATE_PET_FOUND_TITLE), msg, QMessageBox.Yes | QMessageBox.No)
+                    msg = tr("There is a pet already with the same data but different age or weight. Do you want to update the current record?")
+                    reply = QMessageBox.question(dialog, tr("Duplicate Pet Found"), msg, QMessageBox.Yes | QMessageBox.No)
                     if reply == QMessageBox.Yes:
                         pet_repo.update_pet_details(existing["id"], age_val, weight_val)
                 else:
-                    QMessageBox.information(dialog, tr(TR_INFO_TITLE), tr(TR_PET_ALREADY_RECORDED_MSG))
+                    QMessageBox.information(dialog, tr("Information"), tr("Pet is already recorded."))
             else:
                 # Add as new if no duplicate found
                 pet_repo.add_pet(
@@ -510,7 +442,7 @@ class ClientsPage(BaseEntityPage):
         if not data: return
 
         dialog = QDialog(self)
-        dialog.setWindowTitle(tr(TR_EDIT_PET_TITLE).format(name=data['pet_name'])) # Use TR_EDIT_PET_TITLE
+        dialog.setWindowTitle(tr("Edit Pet: {name}").format(name=data['pet_name']))
         dialog.setFixedSize(*DIALOG_CONFIG["pet"])
         layout = QFormLayout(dialog)
 
@@ -519,12 +451,12 @@ class ClientsPage(BaseEntityPage):
         species.view().window().setAttribute(Qt.WA_TranslucentBackground)
         species.view().window().setWindowFlags(Qt.Popup | Qt.FramelessWindowHint | Qt.NoDropShadowWindowHint)
         
-        breed = QLineEdit(data['breed']) # Use tr() on individual items
+        breed = QLineEdit(data['breed'])
         breed_completer = QCompleter(pet_repo.get_unique_breeds())
         breed_completer.setCaseSensitivity(Qt.CaseInsensitive)
         breed.setCompleter(breed_completer)
         
-        gender = QComboBox(); gender.setView(QListView()); gender.addItems(TR_GENDER_OPTIONS); gender.setCurrentText(data['gender'])
+        gender = QComboBox(); gender.setView(QListView()); gender.addItems(GENDER_OPTIONS); gender.setCurrentText(data['gender'])
         gender.view().window().setAttribute(Qt.WA_TranslucentBackground)
         gender.view().window().setWindowFlags(Qt.Popup | Qt.FramelessWindowHint | Qt.NoDropShadowWindowHint)
         age = QSpinBox(); age.setMaximum(600); age.setValue(data['age_months'])
@@ -542,17 +474,17 @@ class ClientsPage(BaseEntityPage):
             client_selector.addItem(c["owner_name"], c["client_id"])
             if c["client_id"] == data["client_id"]: client_selector.setCurrentIndex(client_selector.count()-1)
 
-        layout.addRow(tr(TR_PET_NAME_LABEL), name)
-        layout.addRow(tr(TR_SPECIES_LABEL), species)
-        layout.addRow(tr(TR_BREED_LABEL), breed)
-        layout.addRow(tr(TR_GENDER_LABEL), gender)
-        layout.addRow(tr(TR_AGE_MONTHS_LABEL), age)
-        layout.addRow(tr(TR_WEIGHT_LABEL), weight)
-        layout.addRow(tr(TR_OWNER_LABEL), client_selector)
+        layout.addRow(tr("Pet Name*:"), name)
+        layout.addRow(tr("Species:"), species)
+        layout.addRow(tr("Breed:"), breed)
+        layout.addRow(tr("Gender:"), gender)
+        layout.addRow(tr("Age (Months):"), age)
+        layout.addRow(tr("Weight (kg):"), weight)
+        layout.addRow(tr("Owner:"), client_selector)
 
         buttons = QDialogButtonBox()
-        ok_button = buttons.addButton(tr(TR_OK), QDialogButtonBox.AcceptRole)
-        cancel_button = buttons.addButton(tr(TR_CANCEL), QDialogButtonBox.RejectRole)
+        ok_button = buttons.addButton(tr("OK"), QDialogButtonBox.AcceptRole)
+        cancel_button = buttons.addButton(tr("Cancel"), QDialogButtonBox.RejectRole)
         def handle_save():
             if pet_repo.update_pet(pet_id, name.text().strip().capitalize(), species.currentText(), 
                                    breed.text().strip().capitalize(), gender.currentText(), 
@@ -594,7 +526,7 @@ class ClientsPage(BaseEntityPage):
         
         def visit_formatter(key, val, item):
             if key == "consult":
-                is_yes = (val == 1) # Use TR_YES / TR_NO for display
+                is_yes = (val == 1)
                 item.setForeground(palette.qcolor("state_success") if is_yes else palette.qcolor("state_danger"))
                 return tr("Yes") if is_yes else tr("No")
             return val
@@ -612,7 +544,7 @@ class ClientsPage(BaseEntityPage):
     def add_appointment_dialog(self):
         """Opens dialog to schedule a new appointment."""
         dialog = QDialog(self)
-        dialog.setWindowTitle(tr(TR_ADD_APPOINTMENT_TITLE))
+        dialog.setWindowTitle(tr("Add Appointment"))
         dialog.setFixedSize(*DIALOG_CONFIG["appointment"])
         layout = QFormLayout(dialog)
         
@@ -625,12 +557,12 @@ class ClientsPage(BaseEntityPage):
         service.view().window().setWindowFlags(Qt.Popup | Qt.FramelessWindowHint | Qt.NoDropShadowWindowHint)
         service.setEditable(True)
         service.addItems(supply_repo.get_all_services())
-        service.lineEdit().setPlaceholderText(tr(TR_SERVICE_PLACEHOLDER)) # Use TR_SERVICE_PLACEHOLDER
+        service.lineEdit().setPlaceholderText(tr("Consultation"))
         status = QComboBox()
         status.setView(QListView())
         status.view().window().setAttribute(Qt.WA_TranslucentBackground)
         status.view().window().setWindowFlags(Qt.Popup | Qt.FramelessWindowHint | Qt.NoDropShadowWindowHint)
-        for s in TR_STATUS_OPTIONS:
+        for s in STATUS_OPTIONS:
             status.addItem(tr(s), s)
         notes = QLineEdit()
         
@@ -650,7 +582,7 @@ class ClientsPage(BaseEntityPage):
         client_selector.setEditable(True)
         client_selector.setInsertPolicy(QComboBox.NoInsert)
         client_selector.completer().setFilterMode(Qt.MatchContains)
-        client_selector.setPlaceholderText(tr(TR_SELECT_OWNER_PLACEHOLDER))
+        client_selector.setPlaceholderText(tr("Select Owner..."))
 
         clients = client_repo.get_clients()
         
@@ -659,7 +591,6 @@ class ClientsPage(BaseEntityPage):
         client_selector.setCurrentIndex(-1)
         
         # Initial population of pet_selector based on the first *valid* client, if any
-        # Or just "No Pet" if no clients are available or "Select Client" is chosen
         self._update_pet_selector_combo(pet_selector, client_selector.currentData())
         
         # Connect client_selector to update pet_selector
@@ -667,23 +598,23 @@ class ClientsPage(BaseEntityPage):
             lambda: self._update_pet_selector_on_client_change(client_selector, pet_selector)
         )
         
-        layout.addRow(tr(TR_APPOINTMENT_DATE_LABEL), appointment_date)
-        layout.addRow(tr(TR_SERVICE_LABEL), service)
-        layout.addRow(tr(TR_STATUS_LABEL), status)
-        layout.addRow(tr(TR_NOTES_LABEL), notes)
-        layout.addRow(tr(TR_OWNER_SELECT_LABEL), client_selector)
-        layout.addRow(tr(TR_SELECT_PET_LABEL), pet_selector)
+        layout.addRow(tr("Appointment Date:"), appointment_date)
+        layout.addRow(tr("Service:"), service)
+        layout.addRow(tr("Status:"), status)
+        layout.addRow(tr("Notes:"), notes)
+        layout.addRow(tr("Owner*:"), client_selector)
+        layout.addRow(tr("Select Pet:"), pet_selector)
         
         buttons = QDialogButtonBox()
-        ok_button = buttons.addButton(tr(TR_OK), QDialogButtonBox.AcceptRole)
-        cancel_button = buttons.addButton(tr(TR_CANCEL), QDialogButtonBox.RejectRole)
+        ok_button = buttons.addButton(tr("OK"), QDialogButtonBox.AcceptRole)
+        cancel_button = buttons.addButton(tr("Cancel"), QDialogButtonBox.RejectRole)
         
         def handle_accept():
             selected_client_id = client_selector.currentData()
             selected_pet_id = pet_selector.currentData()
             
             if selected_client_id is None:
-                QMessageBox.warning(dialog, tr(TR_INPUT_ERROR_HEADING), tr(TR_APPOINTMENT_CLIENT_REQUIRED_MSG))
+                QMessageBox.warning(dialog, tr("Input Error"), tr("Please select a client for the appointment."))
                 return
             
             service_text = service.currentText().strip().capitalize() or "Consultation"
@@ -715,7 +646,7 @@ class ClientsPage(BaseEntityPage):
         if not data: return
 
         dialog = QDialog(self)
-        dialog.setWindowTitle(tr(TR_EDIT_APPOINTMENT_TITLE))
+        dialog.setWindowTitle(tr("Edit Appointment"))
         dialog.setFixedSize(*DIALOG_CONFIG["appointment"])
         layout = QFormLayout(dialog)
 
@@ -725,7 +656,7 @@ class ClientsPage(BaseEntityPage):
         service.view().window().setWindowFlags(Qt.Popup | Qt.FramelessWindowHint | Qt.NoDropShadowWindowHint)
         status = QComboBox()
         status.setView(QListView())
-        for s in TR_STATUS_OPTIONS:
+        for s in STATUS_OPTIONS:
             status.addItem(tr(s), s)
             if s == data['status']: status.setCurrentIndex(status.count() - 1)
         status.view().window().setAttribute(Qt.WA_TranslucentBackground)
@@ -753,12 +684,12 @@ class ClientsPage(BaseEntityPage):
         self._update_pet_selector_combo(pet_sel, client_sel.currentData())
         pet_sel.setCurrentText(data['pet_name'])
 
-        layout.addRow(tr(TR_DATE), date_edit); layout.addRow(tr(TR_SERVICE), service); layout.addRow(tr(TR_STATUS), status)
-        layout.addRow(tr(TR_NOTES), notes); layout.addRow(tr(TR_OWNER_LABEL), client_sel); layout.addRow(tr(TR_PET_LABEL), pet_sel)
+        layout.addRow(tr("Date:"), date_edit); layout.addRow(tr("Service:"), service); layout.addRow(tr("Status:"), status)
+        layout.addRow(tr("Notes:"), notes); layout.addRow(tr("Owner:"), client_sel); layout.addRow(tr("Pet:"), pet_sel)
 
         buttons = QDialogButtonBox()
-        ok_button = buttons.addButton(tr(TR_OK), QDialogButtonBox.AcceptRole)
-        cancel_button = buttons.addButton(tr(TR_CANCEL), QDialogButtonBox.RejectRole)
+        ok_button = buttons.addButton(tr("OK"), QDialogButtonBox.AcceptRole)
+        cancel_button = buttons.addButton(tr("Cancel"), QDialogButtonBox.RejectRole)
         def handle_save():
             if appointment_repo.update_appointment(
                 app_id, date_edit.dateTime().toString("yyyy-MM-dd HH:mm"),
@@ -779,7 +710,7 @@ class ClientsPage(BaseEntityPage):
     def _update_pet_selector_combo(self, pet_selector, client_id):
         """Populates the pet_selector QComboBox with pets for the given client_id."""
         pet_selector.clear()
-        pet_selector.setPlaceholderText(tr(TR_SELECT_PET_PLACEHOLDER))
+        pet_selector.setPlaceholderText(tr("Select Pet..."))
         pet_selector.setCurrentIndex(-1)
         
         if client_id is not None:

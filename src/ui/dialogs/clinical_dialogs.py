@@ -23,23 +23,9 @@ import src.core.repositories.pet_repo as pet_repo
 import src.core.repositories.visit_repo as visit_repo
 import src.core.services.clinical_service as clinical_service
 from src.config import (SETTINGS_ORG, SETTINGS_APP,
-    SETTING_CONSULT_FEE_LABEL, DEFAULT_CONSULT_FEE, TR_OK, TR_CANCEL,
-    TR_OWNER_NAME, TR_PET_NAME, TR_ITEM_NAME, TR_CATEGORY, TR_SUB_CATEGORY,
-    TR_QUANTITY, TR_PRICE, TR_DATE, TR_DIAGNOSIS, TR_NOTES, TR_PHONE,
-    TR_SPECIES, TR_BREED, TR_GENDER, TR_AGE, TR_WEIGHT, TR_MALE, TR_FEMALE, TR_OTHER,
-    TR_SUCCESS, TR_ERROR
+    SETTING_CONSULT_FEE_LABEL, DEFAULT_CONSULT_FEE
 )
 from src.utils.i18n import tr
-
-#============================== TRANSLATABLE STRINGS ===================================================#
-
-TR_CONSULT_DESCRIPTION = "Consult Charge Applied?"
-TR_ESTIMATED_TOTAL_LABEL = "Estimated Total: ${total:,.2f}"
-TR_ADD_DIALOG_RECEIPT_MSG = "\n\nReceipt ID: {receipt_id}"
-TR_SUPPLIES_RECEIPT_LABEL = "SUPPLIES RECEIPT"
-TR_ADD_SUPPLY_ITEM_LABEL = "+ Add Supply Item"
-TR_STOCK_ERROR_HEADING = "Stock Error"
-TR_STOCK_ERROR_MSG = "Insufficient stock for {name}. Maximum available: {max_qty}"
 
 # Date/Time Formats
 DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm"
@@ -89,10 +75,10 @@ class SupplyReceiptMixin:
         layout = QVBoxLayout(container)
         
         # Store reference to the header for potential retranslation
-        self.supplies_header_label = QLabel(f"<b>{tr(TR_SUPPLIES_RECEIPT_LABEL)}</b>")
+        self.supplies_header_label = QLabel(f"<b>{tr('SUPPLIES RECEIPT')}</b>")
         layout.addWidget(self.supplies_header_label)
         
-        self.add_item_btn = QPushButton(tr(TR_ADD_SUPPLY_ITEM_LABEL))
+        self.add_item_btn = QPushButton(tr("+ Add Supply Item"))
         layout.addWidget(self.add_item_btn)
         
         # Column Headers Frame
@@ -102,11 +88,11 @@ class SupplyReceiptMixin:
         h_layout.setSpacing(5)
 
         for text, width in [
-            (TR_CATEGORY, SUPPLY_COLUMN_WIDTHS["category"]),
-            (TR_SUB_CATEGORY, SUPPLY_COLUMN_WIDTHS["sub_category"]),
-            (TR_ITEM_NAME, SUPPLY_COLUMN_WIDTHS["item_name"]),
-            (TR_QUANTITY, SUPPLY_COLUMN_WIDTHS["quantity"]),
-            (TR_PRICE, SUPPLY_COLUMN_WIDTHS["price"])
+            ("Category", SUPPLY_COLUMN_WIDTHS["category"]),
+            ("Sub-Category", SUPPLY_COLUMN_WIDTHS["sub_category"]),
+            ("Item Name", SUPPLY_COLUMN_WIDTHS["item_name"]),
+            ("Quantity", SUPPLY_COLUMN_WIDTHS["quantity"]),
+            ("Price", SUPPLY_COLUMN_WIDTHS["price"])
         ]:
             lbl = QLabel(f"<b>{tr(text)}</b>")
             lbl.setFixedWidth(width)
@@ -264,14 +250,14 @@ class BaseClinicalDialog(QDialog, SupplyReceiptMixin):
         
         # Footer with Total Label
         footer_layout = QHBoxLayout()
-        self.total_label = QLabel(f"<b>{tr(TR_ESTIMATED_TOTAL_LABEL).format(total=0.0)}</b>")
+        self.total_label = QLabel(f"<b>{tr('Estimated Total: ${total:,.2f}').format(total=0.0)}</b>")
         self.total_label.setStyleSheet("font-size: 14px; color: #2ECC71; margin-left: 10px;")
         footer_layout.addWidget(self.total_label)
         footer_layout.addStretch()
         
         self.buttons = QDialogButtonBox()
-        ok_button = self.buttons.addButton(tr(TR_OK), QDialogButtonBox.AcceptRole)
-        cancel_button = self.buttons.addButton(tr(TR_CANCEL), QDialogButtonBox.RejectRole)
+        ok_button = self.buttons.addButton(tr("OK"), QDialogButtonBox.AcceptRole)
+        cancel_button = self.buttons.addButton(tr("Cancel"), QDialogButtonBox.RejectRole)
         self.buttons.accepted.connect(self.handle_accept)
         self.buttons.rejected.connect(self.reject)
         footer_layout.addWidget(self.buttons)
@@ -285,7 +271,7 @@ class BaseClinicalDialog(QDialog, SupplyReceiptMixin):
         """Common logic to display insufficient stock warnings."""
         if isinstance(result, str) and result.startswith("STOCK_ERROR"):
             _, name, max_qty = result.split("|")
-            QMessageBox.warning(self, tr(TR_STOCK_ERROR_HEADING), tr(TR_STOCK_ERROR_MSG).format(name=name, max_qty=max_qty))
+            QMessageBox.warning(self, tr("Stock Error"), tr("Insufficient stock for {name}. Maximum available: {max_qty}").format(name=name, max_qty=max_qty))
             return True
         return False
     
@@ -306,7 +292,7 @@ class BaseClinicalDialog(QDialog, SupplyReceiptMixin):
                     total += qty_sb.value() * price_sb.value()
         
         if hasattr(self, 'total_label'):
-            self.total_label.setText(f"<b>{tr(TR_ESTIMATED_TOTAL_LABEL).format(total=total)}</b>")
+            self.total_label.setText(f"<b>{tr('Estimated Total: ${total:,.2f}').format(total=total)}</b>")
     
     def handle_accept(self):
         """Should be overridden by child classes."""
@@ -351,7 +337,7 @@ class AddVisitDialog(BaseClinicalDialog):
         # Fetch current fee from settings
         settings = QSettings()
         fee = settings.value(SETTING_CONSULT_FEE_LABEL, DEFAULT_CONSULT_FEE)
-        self.consult = QCheckBox(f"{tr(TR_CONSULT_DESCRIPTION)} (${fee})")
+        self.consult = QCheckBox(f"{tr('Consult Charge Applied?')} (${fee})")
         # Removed setLayoutDirection(Qt.RightToLeft) to maintain LTR policy
         self.diagnosis = QLineEdit()
         diag_completer = QCompleter(visit_repo.get_unique_diagnoses())
@@ -363,12 +349,12 @@ class AddVisitDialog(BaseClinicalDialog):
         self.notes.setFixedHeight(NOTES_BOX_HEIGHT)
         self.notes.setPlaceholderText(tr("Add notes..."))
         
-        self.form.addRow(tr(TR_DATE) + ":", self.visit_date)
-        self.form.addRow(tr(TR_OWNER_NAME) + "*:", self.client_selector)
-        self.form.addRow(tr(TR_PET_NAME) + ":", self.pet_selector)
+        self.form.addRow(tr("Date:") + ":", self.visit_date)
+        self.form.addRow(tr("Owner Name") + "*:", self.client_selector)
+        self.form.addRow(tr("Pet Name") + ":", self.pet_selector)
         self.form.addRow(tr("Consult:"), self.consult)
-        self.form.addRow(tr(TR_DIAGNOSIS) + ":", self.diagnosis)
-        self.form.addRow(tr(TR_NOTES) + ":", self.notes)
+        self.form.addRow(tr("Diagnosis") + ":", self.diagnosis)
+        self.form.addRow(tr("Notes") + ":", self.notes)
         
         self._update_pets()
         self._update_total()
@@ -387,7 +373,7 @@ class AddVisitDialog(BaseClinicalDialog):
         pid = self.pet_selector.currentData()
         if not cid:
             # Only the owner selection is strictly required now.
-            QMessageBox.warning(self, tr(TR_ERROR), tr("Owner selection is required."))
+            QMessageBox.warning(self, tr("Error"), tr("Owner selection is required."))
             return
         
         items = self.get_final_items()
@@ -408,8 +394,8 @@ class AddVisitDialog(BaseClinicalDialog):
                 msg = tr("Record added successfully.")
                 # Only show Receipt ID if a financial transaction occurred (Consult or Supplies)
                 if is_consult or items:
-                    msg += tr(TR_ADD_DIALOG_RECEIPT_MSG).format(receipt_id=result)
-                QMessageBox.information(self, tr(TR_SUCCESS), msg)
+                    msg += tr("\n\nReceipt ID: {receipt_id}").format(receipt_id=result)
+                QMessageBox.information(self, tr("Success"), msg)
             else:
                 QMessageBox.critical(self, tr("Critical Error"), tr("Failed to save record to database."))
                 return
@@ -426,13 +412,13 @@ class AddFullEntryDialog(BaseClinicalDialog):
     def _setup_fields(self):
         self.v_date = QDateTimeEdit(QDateTime.currentDateTime())
         self.v_date.setCalendarPopup(True)
-        self.form.addRow(tr(TR_DATE) + ":", self.v_date)
+        self.form.addRow(tr("Date:") + ":", self.v_date)
         
         self._add_section_header("CLIENT DETAILS")
         self.owner_name = QLineEdit()
         self.phone = QLineEdit()
-        self.form.addRow(tr(TR_OWNER_NAME) + "*:", self.owner_name)
-        self.form.addRow(tr(TR_PHONE) + ":", self.phone)
+        self.form.addRow(tr("Owner Name") + "*:", self.owner_name)
+        self.form.addRow(tr("Phone Number") + ":", self.phone)
         
         self._add_section_header("PET DETAILS")
         self.pet_name = QLineEdit()
@@ -450,22 +436,22 @@ class AddFullEntryDialog(BaseClinicalDialog):
         self.gender.setView(QListView())
         self.gender.view().window().setAttribute(Qt.WA_TranslucentBackground)
         self.gender.view().window().setWindowFlags(Qt.Popup | Qt.FramelessWindowHint | Qt.NoDropShadowWindowHint)
-        self.gender.addItems([tr(TR_MALE), tr(TR_FEMALE), tr(TR_OTHER)])
+        self.gender.addItems([tr("Male"), tr("Female"), tr("Other")])
         self.age = QSpinBox(); self.age.setMaximum(ADD_FULL_ENTRY_DIALOG_MAX_AGE)
         self.weight = QDoubleSpinBox(); self.weight.setMaximum(ADD_FULL_ENTRY_DIALOG_MAX_WEIGHT)
         
-        self.form.addRow(tr(TR_PET_NAME) + ":", self.pet_name)
-        self.form.addRow(tr(TR_SPECIES) + ":", self.species)
-        self.form.addRow(tr(TR_BREED) + ":", self.breed)
-        self.form.addRow(tr(TR_GENDER) + ":", self.gender)
-        self.form.addRow(tr(TR_AGE) + ":", self.age)
-        self.form.addRow(tr(TR_WEIGHT) + ":", self.weight)
+        self.form.addRow(tr("Pet Name") + ":", self.pet_name)
+        self.form.addRow(tr("Species") + ":", self.species)
+        self.form.addRow(tr("Breed") + ":", self.breed)
+        self.form.addRow(tr("Gender") + ":", self.gender)
+        self.form.addRow(tr("Age") + ":", self.age)
+        self.form.addRow(tr("Weight") + ":", self.weight)
         
         self._add_section_header("VISIT DETAILS")
         # Fetch current fee from settings
         settings = QSettings()
         fee = settings.value(SETTING_CONSULT_FEE_LABEL, DEFAULT_CONSULT_FEE)
-        self.consult = QCheckBox(f"{tr(TR_CONSULT_DESCRIPTION)} (${fee})")
+        self.consult = QCheckBox(f"{tr('Consult Charge Applied?')} (${fee})")
         # Removed setLayoutDirection(Qt.RightToLeft) to maintain LTR policy
         self.consult.toggled.connect(self._update_total)
         self.diagnosis = QLineEdit()
@@ -479,13 +465,13 @@ class AddFullEntryDialog(BaseClinicalDialog):
         self.notes.setPlaceholderText(tr("Add notes..."))
         
         self.form.addRow(tr("Consult:"), self.consult)
-        self.form.addRow(tr(TR_DIAGNOSIS) + ":", self.diagnosis)
-        self.form.addRow(tr(TR_NOTES) + ":", self.notes)
+        self.form.addRow(tr("Diagnosis") + ":", self.diagnosis)
+        self.form.addRow(tr("Notes") + ":", self.notes)
         self._update_total()
     
     def handle_accept(self):
         if not self.owner_name.text():
-            QMessageBox.warning(self, tr(TR_ERROR), tr("Owner name is required."))
+            QMessageBox.warning(self, tr("Error"), tr("Owner name is required."))
             return
         
         name_input = self.owner_name.text().strip().title()
@@ -533,12 +519,12 @@ class AddFullEntryDialog(BaseClinicalDialog):
         
         if not success:
             if not self.handle_stock_error(result):
-                QMessageBox.critical(self, tr(TR_ERROR), str(result))
+                QMessageBox.critical(self, tr("Error"), str(result))
             return
         msg = tr("Record added successfully.")
         if result and isinstance(result, dict) and 'receipt_id' in result:
-            msg += tr(TR_ADD_DIALOG_RECEIPT_MSG).format(receipt_id=result['receipt_id'])
-        QMessageBox.information(self, tr(TR_SUCCESS), msg)
+            msg += tr("\n\nReceipt ID: {receipt_id}").format(receipt_id=result['receipt_id'])
+        QMessageBox.information(self, tr("Success"), msg)
         self.accept()
 
 
@@ -558,19 +544,19 @@ class EditVisitDialog(QDialog):
         diag_completer.setCaseSensitivity(Qt.CaseInsensitive)
         self.diag_edit.setCompleter(diag_completer)
         
-        self.consult_cb = QCheckBox(tr(TR_CONSULT_DESCRIPTION))
+        self.consult_cb = QCheckBox(tr("Consult Charge Applied?"))
         self.consult_cb.setChecked(is_consult)
         self.notes_edit = QTextEdit(notes)
         self.notes_edit.setFixedHeight(NOTES_BOX_HEIGHT)
         
-        layout.addRow(tr(TR_DATE) + ":", self.date_edit)
+        layout.addRow(tr("Date:") + ":", self.date_edit)
         layout.addRow(tr("Consult:"), self.consult_cb)
-        layout.addRow(tr(TR_DIAGNOSIS) + ":", self.diag_edit)
-        layout.addRow(tr(TR_NOTES) + ":", self.notes_edit)
+        layout.addRow(tr("Diagnosis") + ":", self.diag_edit)
+        layout.addRow(tr("Notes") + ":", self.notes_edit)
         
         buttons = QDialogButtonBox()
-        ok_button = buttons.addButton(tr(TR_OK), QDialogButtonBox.AcceptRole)
-        cancel_button = buttons.addButton(tr(TR_CANCEL), QDialogButtonBox.RejectRole)
+        ok_button = buttons.addButton(tr("OK"), QDialogButtonBox.AcceptRole)
+        cancel_button = buttons.addButton(tr("Cancel"), QDialogButtonBox.RejectRole)
         buttons.accepted.connect(self.handle_save)
         buttons.rejected.connect(self.reject)
         layout.addRow(buttons)
@@ -587,4 +573,4 @@ class EditVisitDialog(QDialog):
         if success:
             self.accept()
         else:
-            QMessageBox.critical(self, tr(TR_ERROR), tr("Failed to update visit record."))
+            QMessageBox.critical(self, tr("Error"), tr("Failed to update visit record."))
