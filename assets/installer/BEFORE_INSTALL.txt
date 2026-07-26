@@ -1,0 +1,26 @@
+Petcare Efficiency Toolkit (P.E.T) - Before you install
+========================================================
+
+Thank you for choosing P.E.T. A few notes before you continue:
+
+Requirements
+  - Windows 7 or newer (64-bit recommended). The installer will add the
+    Microsoft Visual C++ Redistributables automatically if they are missing.
+  - You need administrator rights to install P.E.T on this computer.
+
+Your data is safe
+  - All of your data (clients, pets, visits, receipts, stock, settings, logs)
+    lives in your Windows user profile under:
+      %LOCALAPPDATA%\Petcare Efficiency Toolkit (P.E.T)\Database.db
+  - Upgrading from an earlier version NEVER touches that folder. Your records
+    are carried over and migrated automatically on the first launch.
+  - Uninstalling P.E.T keeps your data too; P.E.T will ask you before it ever
+    deletes it.
+
+Backups
+  - Use Settings > Database Backup inside the app to create manual backups,
+    and take one before major upgrades if you want an extra safety net.
+
+After installation
+  - A desktop shortcut is optional (you choose during setup).
+  - The app opens with a first-run wizard that creates the admin account.

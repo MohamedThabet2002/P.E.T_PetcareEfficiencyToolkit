@@ -1,0 +1,12 @@
+[flake8]
+max-line-length = 120
+exclude = .wvenv,.venv,.git,__pycache__,build,dist,Database.db
+extend-ignore =
+    E203,    # whitespace before ':' (black/PEP8 conflict)
+    E402,    # module level import not at top (lazy/legacy imports)
+    F401,    # unused import flagged where re-exported
+    W503,    # line break before binary operator
+    W504
+per-file-ignores =
+    src/core/database/legacy_migration.py:E501
+    src/core/database/schema_definitions.py:E501

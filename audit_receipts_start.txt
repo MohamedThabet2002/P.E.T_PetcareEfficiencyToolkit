@@ -1,0 +1,200 @@
+﻿"""
+Financial Ledger module for the PET Application.
+Provides a specialized view for managing sales receipts and logging general clinic expenses.
+"""
+
+from PyQt5.QtWidgets import (
+    QTableWidgetItem, QMessageBox, QDialog, QFormLayout, QListView,
+    QDateTimeEdit, QComboBox, QLineEdit, QDoubleSpinBox,
+    QDialogButtonBox, QVBoxLayout, QHBoxLayout, QLabel, QTableWidget, QHeaderView,
+    QAbstractItemView, QPushButton, QFrame, QScrollArea, QWidget,
+)
+from PyQt5.QtCore import Qt, QDateTime, QTimer
+from PyQt5.QtGui import QBrush, QColor
+
+from src.ui.themes.color_palettes import get_active_palette, ThemeManager
+from src.utils.i18n import tr
+from src.utils.settings_manager import SettingsManager
+from src.config.constants import DEFAULT_CLINIC_NAME
+import src.core.repositories.sales_repo as sales_repo
+from src.modules.base_page import BaseEntityPage
+from src.core.permissions import can
+from src.ui.dialogs.edit_receipt_dialog import EditReceiptDialog
+
+#=========================================== CONSTANTS ===================================================#
+
+# Expense Categories
+EXPENSE_CATEGORIES = [
+    "Utilities",
+    "Rent",
+    "Salary",
+    "Maintenance",
+    "Tax",
+    "Other",
+]
+
+# RECEIPT_COLUMN_MAP uses English strings for headers
+RECEIPT_COLUMN_MAP = [
+    ("ID", "id", 100),
+    ("Date", "receipt_date", 150),
+    ("Item Name", "item_name", 180),
+    ("Category", "item_type", 100),
+    ("Total Price", "total_price", 150),
+    ("Type", "receipt_kind", 100),
+    ("Notes", "notes", 200),
+]
+
+
+def is_expense_code(code):
+    """True when a receipt_code belongs to an expense.
+
+    Expense codes are unique per row (``EXPENSE-001``, ``EXPENSE-002``, ...), so
+    they must be matched by prefix rather than against one exact value. Legacy
+    rows created before the codes became unique use a bare ``Expense``.
+    """
+    return str(code or "").upper().startswith("EXPENSE")
+
+
+def receipt_type_label(code):
+    """Legacy fallback: localized label derived from a receipt_code prefix."""
+    return tr("Expense") if is_expense_code(code) else str(code or "")
+
+
+def receipt_kind_label(kind, code=None):
+    """Localized display label for a receipt's ``receipt_kind``.
+
+    Falls back to the code prefix when the kind is empty (rows written before
+    the kind column existed), so the ledger never shows a blank type.
+    """
+    normalized = str(kind or "").strip().lower()
+    if normalized not in ("visit", "retail", "expense"):
+        upper_code = str(code or "").upper()
+        if is_expense_code(upper_code):
+            normalized = "expense"
+        elif upper_code.startswith("VISIT"):
+            normalized = "visit"
+        elif upper_code.startswith("RETAIL"):
+            normalized = "retail"
+    return {
+        "visit": tr("Visit"),
+        "retail": tr("Retail"),
+        "expense": tr("Expense"),
+    }.get(normalized, str(kind or code or ""))
+
+#============================================== CODE =====================================================#
+
+
+class ReceiptInfoDialog(QDialog):
+    """Professional receipt view for a single receipt.
+
+    Renders the receipt as a printable-style card (clinic header, meta grid,
+    itemized lines, subtotal/discount/total), folds the cumulative revision
+    trail from ``receipt_adjustments`` in as signed delta lines, and provides a
+    payment tracker (view / add / edit / delete) plus an Edit Receipt action â€”
+    write actions are gated on ``edit_records``.
+    """
+
+    # Money formatting helpers -------------------------------------------------
+    @staticmethod
+    def _money(value):
+        return "$ {amount:,.2f}".format(amount=float(value or 0))
+
+    @staticmethod
+    def _delta(value):
+        return "$ {amount:+,.2f}".format(amount=float(value or 0))
+
+    def __init__(self, receipt_id, parent=None, current_user=None):
+        super().__init__(parent)
+        self.receipt_id = receipt_id
+        self._current_user = current_user
+        self._can_write = bool(current_user) and can(current_user, "edit_records") or False
+        self.setWindowTitle(tr("Receipt Details"))
+        self.setMinimumSize(620, 660)
+
+        outer = QVBoxLayout(self)
+        self._scroll = QScrollArea()
+        self._scroll.setWidgetResizable(True)
+        self._scroll.setFrameShape(QFrame.NoFrame)
+        outer.addWidget(self._scroll)
+
+        self._content = QWidget()
+        self._content_layout = QVBoxLayout(self._content)
+        self._content_layout.setContentsMargins(12, 12, 12, 12)
+        self._content_layout.setSpacing(10)
+        self._scroll.setWidget(self._content)
+
+        self._rebuild()
+
+    # ------------------------------------------------------------------ data
+    def _collect(self):
+        header = sales_repo.get_receipt(self.receipt_id) or {}
+        header.setdefault("receipt_date", "")
+        header.setdefault("total_price", 0)
+        header.setdefault("discount", 0)
+        header.setdefault("receipt_code", "")
+        header.setdefault("receipt_kind", "")
+        header.setdefault("owner_name", "")
+        header.setdefault("owner_phone", "")
+        items = sales_repo.get_receipt_line_items(self.receipt_id)
+
+        from src.core.repositories.payment_repo import get_payments_for_receipt, get_total_paid
+        from src.core.repositories.receipt_adjustment_repo import (
+            get_adjustments_for_receipt, get_adj_writer_name,
+        )
+        payments = get_payments_for_receipt(self.receipt_id)
+        paid = get_total_paid(self.receipt_id)
+        adjustments = get_adjustments_for_receipt(self.receipt_id)
+        return header, items, payments, paid, adjustments, get_adj_writer_name
+
+    def _clear(self):
+        while self._content_layout.count():
+            item = self._content_layout.takeAt(0)
+            widget = item.widget()
+            if widget is not None:
+                widget.setParent(None)
+                widget.deleteLater()
+            elif item.spacerItem():
+                del item
+
+    def _rebuild(self, *args):
+        self._clear()
+        self.header, self.items, self.payments, self.paid, self.adjustments, self._adj_writer = self._collect()
+        self.total = float(self.header.get("total_price") or 0)
+        self.discount = float(self.header.get("discount") or 0)
+        self.balance = round(self.total - self.paid, 2)
+        self._build_receipt()
+        self._build_payments()
+        self._build_adjustments()
+        self._build_footer()
+        self._content_layout.addStretch(1)
+        self._auto_fit_once()
+
+    def showEvent(self, event):
+        super().showEvent(event)
+        if not getattr(self, "_auto_fitted", False):
+            self._auto_fitted = True
+            QTimer.singleShot(0, self._auto_fit_once)
+
+    def _auto_fit_once(self):
+        """Sizes the dialog to its content so the scrollbar hides on open.
+
+        Re-fits each table with real (post-layout) column widths, sizes the
+        dialog to the content, then keeps growing it until the scroll area's
+        vertical scrollbar disappears. The trailing stretch in the content
+        layout absorbs any extra space so the whole receipt is visible.
+        """
+        for table in self._content.findChildren(QTableWidget):
+            self._fit_content_table(table, extra=26)
+        self.adjustSize()
+        sbar = self._scroll.verticalScrollBar()
+        guard = 0
+        while sbar.isVisible() and guard < 10:
+            self.resize(self.width(), self.height() + sbar.maximum())
+            guard += 1
+
+    def _fit_content_table(self, table, extra=26):
+        """Sizes a table to its real content so rows are never clipped.
+
+        Requires the vertical header to auto-size rows (ResizeToContents).
+        Uses per-row content heights (accounts for wrapped text) and only sets
+        a minimum height â€” inside the scroll area the table can still grow.

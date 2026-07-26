@@ -13,7 +13,8 @@ import platform
 from PyQt5.QtGui import QColor, QBrush
 from PyQt5.QtCore import QSettings, QObject, pyqtSignal
 
-from src.config import APP_NAME, ORG_NAME, SETTINGS_ORG, SETTINGS_APP
+from src.config.meta import APP_NAME, ORG_NAME
+from src.config.paths import SETTINGS_ORG, SETTINGS_APP
 
 logger = logging.getLogger(__name__)
 
@@ -35,6 +36,7 @@ PALETTES = {
         # --- States & Status ---
         "state_success": "#2ECC71",
         "state_warning": "#F39C12",
+        "state_late": "#D35400",
         "state_danger": "#E74C3C",
         "state_info": "#3498DB",
 
@@ -61,6 +63,7 @@ PALETTES = {
 
         "state_success": "#4CAF50",
         "state_warning": "#FFC107",
+        "state_late": "#E67E22",
         "state_danger": "#F44336",
         "state_info": "#2196F3",
 

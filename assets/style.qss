@@ -20,6 +20,7 @@
  * -- Classes --
  * [class="status-card"]                    : Dashboard "Next Client" card
  * [class="info-card"]                      : General purpose info containers
+ * [class="trend-chip"] / [class="trend-pill"] : Month-over-month delta under KPI values
  * [class="kpi-card"]                       : Dashboard summary cards
  * [class="insight-card"]                   : Dashboard mini-table containers
  * [class="chart-card"]                     : Wrappers for QCharts
@@ -31,6 +32,9 @@
  * [class="section-title"]                  : Large headers for dashboard sections
  * [class="status-value"]                   : Highlighted text in status cards
  * [class="timestamp-button-group"]         : Period selection buttons (D, W, M, Y, A)
+ * [class="primary-action"]                 : Standout action buttons (filled, brand color)
+ * [class="template-action"]                : Starter-template buttons (outlined, brand hover)
+ * [class="template-hint"]                  : Caption above the starter-template buttons
  * 
  * -- Specific Object IDs --
  * #dashboard_upcoming_appointments_table   : The main dashboard grid
@@ -55,7 +59,7 @@ QWidget {
     background-color: @bg_base;
     color: @text_primary;
     font-family: 'Segoe UI', sans-serif;
-    font-size: 11pt;
+    font-size: 12pt;
 }
 
 /* Tooltips */
@@ -123,7 +127,7 @@ QLineEdit:focus, QSpinBox:focus, QDoubleSpinBox:focus, QComboBox:focus {
 }
 
 QDateTimeEdit::drop-down{
-    image: url("assets/Icons/down-arrow-ico.png");
+    image: url("assets/Icons/down-arrow.png");
     width: 16px;
 }
 
@@ -131,10 +135,10 @@ QComboBox::drop-down{
     border-left: 1px solid @border;
 }
 QComboBox::down-arrow{
-    image: url("assets/Icons/down-arrow-ico.png");
+    image: url("assets/Icons/down-arrow.png");
     width: 16px;
 }
-QComboBox::editable {
+QComboBox:editable {
     background-color: @bg_surface;
 }
 
@@ -159,11 +163,11 @@ QComboBox QAbstractItemView::item:hover {
 }
 
 QSpinBox::down-button, QDoubleSpinBox::down-button {
-    image: url("assets/Icons/down-arrow-ico.png");
+    image: url("assets/Icons/down-arrow.png");
     width: 16px;
 }
 QSpinBox::up-button, QDoubleSpinBox::up-button {
-    image: url("assets/Icons/up-arrow-ico.png");
+    image: url("assets/Icons/up-arrow.png");
     width: 16px;
 }
 
@@ -174,7 +178,9 @@ QTextEdit {
     padding: 2px;
 }
 
-QCheckBox { color: @text_secondary; }
+QCheckBox { 
+    background: transparent;
+    color: @text_secondary; }
 
 QCheckBox::indicator {
     width: 18px;
@@ -186,7 +192,7 @@ QCheckBox::indicator {
 
 QCheckBox::indicator:checked {
     background-color: @bg_surface;
-    image: url("assets/Icons/check-ico.png");
+    image: url("assets/Icons/check.png");
 }
 
 /* ============================================================================
@@ -267,11 +273,369 @@ QTabBar::tab:hover:!selected {
     color: @text_primary;
 }
 
-QTabBar:scroller {
+QTabBar::scroller {
     width: 50px;
 }
 QTabBar QToolButton {
     background-color: @bg_surface;
+    border: 1px solid @border;
+}
+
+/* Reports tab widget — bordered pane around the tabs + content */
+QTabWidget#reportsTabs::pane {
+    border: 1px solid @border;
+    border-radius: 8px;
+}
+
+QTabWidget#reportsTabs::tab-bar {
+    left: 8px;
+}
+
+/* --- Interactive Report Calendar --- */
+
+QCalendarWidget#reportsCalendar {
+    background-color: @bg_surface;
+    border: 1px solid @border;
+    border-radius: 8px;
+}
+
+/* Force every inner widget (weekday header, spin box, view) to the surface
+   color so no default gray panels peek through around the day grid. */
+QCalendarWidget#reportsCalendar QWidget {
+    background-color: @bg_surface;
+}
+
+QCalendarWidget#reportsCalendar QToolButton {
+    background-color: transparent;
+    color: @text_primary;
+    font-size: 9pt;
+    font-weight: bold;
+    border: none;
+    padding: 2px 6px;
+}
+
+QCalendarWidget#reportsCalendar QToolButton:hover {
+    color: @brand_500;
+}
+
+QCalendarWidget#reportsCalendar QWidget#qt_calendar_navigationbar {
+    background-color: @bg_surface;
+}
+
+QCalendarWidget#reportsCalendar QAbstractItemView {
+    background-color: @bg_surface;
+    color: @text_primary;
+    font-size: 8.5pt;
+    selection-background-color: @brand_500;
+    selection-color: #FFFFFF;
+    outline: 0;
+}
+
+/* ============================================================================
+    Reports Center — redesigned header, KPI cards, sections, tables
+   ============================================================================ */
+
+/* --- Page header card --- */
+QFrame[class="reports-header-card"] {
+    background-color: @bg_surface;
+    border: 1px solid @border;
+    border-radius: 10px;
+}
+
+QLabel[class="reports-page-title"] {
+    background-color: transparent;
+    color: @text_primary;
+    font-size: 13pt;
+    font-weight: bold;
+}
+
+QLabel[class="reports-page-subtitle"] {
+    background-color: transparent;
+    color: @text_secondary;
+    font-size: 9.5pt;
+}
+
+/* --- Range / summary in the header --- */
+QLabel[class="reports-range-title"] {
+    background-color: transparent;
+    color: @brand_500;
+    font-size: 10pt;
+    font-weight: bold;
+}
+
+QLabel[class="reports-range-value"] {
+    background-color: transparent;
+    color: @text_secondary;
+    font-size: 8.5pt;
+}
+
+QLabel[class="reports-summary-line"] {
+    background-color: @bg_base;
+    color: @text_primary;
+    border: 1px solid @border;
+    border-radius: 10px;
+    padding: 3px 10px;
+    font-size: 8.5pt;
+}
+
+QFrame[class="reports-period-trigger"] {
+    background-color: @bg_base;
+    border: 1px solid @border;
+    border-radius: 8px;
+    min-width: 200px;
+}
+
+QFrame[class="reports-period-trigger"]:hover {
+    border: 1px solid @brand_500;
+}
+
+QLabel[class="reports-period-chevron"] {
+    background-color: transparent;
+    color: @text_secondary;
+    font-size: 11pt;
+    padding: 0px 2px;
+}
+
+QFrame[class="reports-calendar-popup"] {
+    background-color: @bg_surface;
+    border: 1px solid @border;
+    border-radius: 10px;
+}
+
+QLabel[class="reports-calendar-hint"] {
+    background-color: transparent;
+    color: @text_secondary;
+    font-size: 8.5pt;
+}
+
+/* --- KPI cards --- */
+QFrame[class="reports-kpi-card"] {
+    background-color: @bg_surface;
+    border: 1px solid @border;
+    border-radius: 12px;
+}
+
+QFrame[class="reports-kpi-card"]:hover {
+    border-color: @brand_500;
+}
+
+QLabel[class="reports-kpi-icon"] {
+    background-color: transparent;
+    color: @brand_500;
+    font-size: 12pt;
+    font-weight: bold;
+    padding: 0px;
+}
+
+QLabel[class="reports-kpi-title"] {
+    background-color: transparent;
+    color: @text_secondary;
+    font-size: 9pt;
+    font-weight: bold;
+}
+
+QLabel[class="reports-kpi-value"] {
+    background-color: transparent;
+    color: @text_primary;
+    font-size: 19pt;
+    font-weight: bold;
+}
+
+QLabel[class="reports-kpi-caption"] {
+    background-color: transparent;
+    color: @text_secondary;
+    font-size: 8pt;
+}
+
+/* --- Section headers --- */
+QWidget[class="reports-section-header"] {
+    background-color: transparent;
+}
+
+QFrame[class="reports-section-accent"] {
+    background-color: @brand_500;
+    border: none;
+    border-radius: 2px;
+}
+
+QLabel[class="reports-section-title"] {
+    background-color: transparent;
+    color: @text_primary;
+    font-size: 12pt;
+    font-weight: bold;
+}
+
+QLabel[class="reports-section-subtitle"] {
+    background-color: transparent;
+    color: @text_secondary;
+    font-size: 9pt;
+}
+
+/* --- Table cards --- */
+QFrame[class="reports-table-card"] {
+    background-color: @bg_surface;
+    border: 1px solid @border;
+    border-radius: 12px;
+}
+
+QWidget[class="reports-table-header"] {
+    background-color: transparent;
+    border-bottom: 1px solid @border;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+QLabel[class="reports-table-title"] {
+    background-color: transparent;
+    color: @text_primary;
+    font-size: 10.5pt;
+    font-weight: bold;
+    padding: 2px 0px;
+}
+
+QLabel[class="reports-empty"] {
+    background-color: transparent;
+    color: @text_secondary;
+    font-size: 9.5pt;
+    padding: 12px;
+}
+
+/* Generic polished report tables (superset of the old insight-table look) */
+QTableWidget[class="reports-table"] {
+    background-color: transparent;
+    border: none;
+    gridline-color: transparent;
+    alternate-background-color: @bg_base;
+}
+
+QTableWidget[class="reports-table"] QHeaderView::section {
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid @border;
+    color: @text_secondary;
+    font-size: 9pt;
+    font-weight: bold;
+    padding: 4px 6px;
+}
+
+QTableWidget[class="reports-table"] QTableCornerButton::section {
+    background-color: transparent;
+    border: none;
+}
+
+/* --- Period bar (presets, nudge, granularity) --- */
+QPushButton[class="reports-preset-chip"] {
+    background-color: @bg_base;
+    color: @text_secondary;
+    border: 1px solid @border;
+    border-radius: 12px;
+    padding: 3px 12px;
+    font-size: 8.5pt;
+    font-weight: bold;
+}
+QPushButton[class="reports-preset-chip"]:hover {
+    background-color: @brand_500_a10;
+    border: 1px solid @brand_500;
+    color: @brand_500;
+}
+QPushButton[class="reports-nudge"] {
+    background-color: @bg_surface;
+    color: @text_primary;
+    border: 1px solid @border;
+    border-radius: 4px;
+    font-size: 12pt;
+    font-weight: bold;
+    padding: 0px;
+    min-width: 28px;
+    max-width: 28px;
+}
+QPushButton[class="reports-nudge"]:hover {
+    background-color: @brand_500_a10;
+    border: 1px solid @brand_500;
+    color: @brand_500;
+}
+
+/* --- Report History panel --- */
+QFrame[class="reports-history-panel"] {
+    background-color: @bg_surface;
+    border: 1px solid @border;
+    border-radius: 12px;
+}
+QWidget[class="reports-history-header"] {
+    background-color: transparent;
+    border-bottom: 1px solid @border;
+}
+QLabel[class="reports-history-title"] {
+    background-color: transparent;
+    color: @text_primary;
+    font-size: 11pt;
+    font-weight: bold;
+}
+QLabel[class="reports-history-count"] {
+    background-color: @brand_500;
+    color: #FFFFFF;
+    border-radius: 9px;
+    padding: 1px 8px;
+    font-size: 8pt;
+    font-weight: bold;
+}
+QPushButton[class="reports-history-collapse"] {
+    background-color: transparent;
+    color: @text_secondary;
+    border: none;
+    font-size: 12pt;
+    font-weight: bold;
+    padding: 0px 4px;
+}
+QPushButton[class="reports-history-collapse"]:hover {
+    color: @brand_500;
+}
+QLineEdit[class="reports-history-search"] {
+    background-color: @bg_base;
+    color: @text_primary;
+    border: 1px solid @border;
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 9pt;
+}
+QTreeWidget[class="reports-history-tree"] {
+    background-color: transparent;
+    border: none;
+    color: @text_primary;
+    font-size: 9pt;
+    outline: 0;
+}
+QTreeWidget[class="reports-history-tree"]::item {
+    padding: 4px 2px;
+    border-radius: 4px;
+}
+QTreeWidget[class="reports-history-tree"]::item:selected {
+    background-color: @brand_500;
+    color: #FFFFFF;
+}
+QTreeWidget[class="reports-history-tree"]::item:hover {
+    background-color: @brand_500_a10;
+}
+QWidget[class="reports-history-actions"] {
+    background-color: transparent;
+    border-top: 1px solid @border;
+}
+QPushButton[class="reports-history-action"] {
+    background-color: @bg_surface;
+    color: @text_primary;
+    border: 1px solid @border;
+    border-radius: 6px;
+    padding: 4px 6px;
+    font-size: 8.5pt;
+    font-weight: 600;
+}
+QPushButton[class="reports-history-action"]:hover {
+    background-color: @brand_500_a10;
+    border: 1px solid @brand_500;
+    color: @brand_500;
+}
+QPushButton[class="reports-history-action"]:disabled {
+    color: @text_secondary;
     border: 1px solid @border;
 }
 
@@ -294,6 +658,7 @@ QPushButton[action="clear"] {
     border-left: none;
     border-right: none;
     border-radius: 0px;
+    margin-top: 1px;
 }
 
 QComboBox[action="filter"] {
@@ -316,7 +681,7 @@ QComboBox[action="filter"]::drop-down {
 }
 
 QComboBox[action="filter"]::down-arrow { 
-    image: url("assets/Icons/filter-ico.png");
+    image: url("assets/Icons/filter.png");
     color: @text_primary;
     width: 16px;
     height: 16px;
@@ -341,10 +706,10 @@ QLabel[logo="primary"]{
 }
 #logo_text {
     color: @text_primary;
-    font-size: 22pt;
+    font-size: 18pt;
     font-family: 'Aldhabi', 'Segoe UI', sans-serif;
     font-weight: bold;
-    margin: 0px 0px 0px 0px;
+    margin: 0px 5px 0px 0px;
     padding: 0px 0px 0px 0px;
 }
 /* Sidebar Navigation Buttons */
@@ -352,11 +717,10 @@ QPushButton[nav="primary"] {
     background-color: transparent;
     border: none;
     border-radius: 10px;
-    margin: 2px 5px 2px 0px;
+    margin: 2px 5px 2px 4px;
     text-align: left;
     padding: 7px;
-    font-weight: bold;
-    font-size: 20pt;
+    font-size: 12pt;
     font-family: 'Segoe UI', sans-serif;
 }
 
@@ -365,7 +729,7 @@ QPushButton[nav="primary"] {
    app_language must be set on the sidebar container widgets at runtime. */
 QWidget[app_language="en"] QPushButton[nav="primary"] {
     font-family: 'Aldhabi', 'Segoe UI', sans-serif;
-    font-size: 35pt;
+    font-size: 18pt;
 }
 
 QWidget[app_language="ar"] QPushButton[nav="primary"] {
@@ -380,6 +744,11 @@ QPushButton[nav="primary"]:hover {
 QPushButton[nav="primary"]:checked {
     background-color: @bg_surface;
     color: @text_primary;
+}
+
+/* Database page main navigation buttons (Clients/Visits/Supplies/Receipts) */
+QPushButton[nav="database"] {
+    padding: 0px;
 }
 
 
@@ -409,12 +778,13 @@ QPushButton[nav="primary"]:checked {
 
 #welcomeLabel {
     color: @state_info;
-    font-size: 14pt;
+    font-size: 10pt;
     font-weight: bold;
 }
 
 #stateLabel {
     color: @text_secondary;
+    font-size: 10pt;
     font-style: italic;
 }
 
@@ -425,7 +795,7 @@ QPushButton[nav="primary"]:checked {
 
 #accountButton:hover {
     background-color: @border;
-    border-radius: 30px;
+    border-radius: 22px;
 }
 
 /* Account QMenu */
@@ -455,7 +825,7 @@ QFrame[class="status-card"],
 QFrame[class="kpi-card"],
 QFrame[class="insight-card"] {
     background-color: @bg_surface;
-    border: 2px solid @border;
+    border: 1px solid @border;
     border-radius: 12px;
     margin: 2px;
 }
@@ -463,8 +833,26 @@ QFrame[class="insight-card"] {
 QFrame[class="info-card"],
 QFrame[class="chart-card"] {
     background-color: @bg_surface;
-    border: 2px solid @border;
+    border: 1px solid @border;
     border-radius: 12px;
+}
+
+/* Report history timeline entries */
+
+QPushButton[class="history-item"] {
+    background-color: @bg_surface;
+    color: @text_primary;
+    border: 1px solid @border;
+    border-radius: 8px;
+    padding: 6px 8px;
+    text-align: left;
+}
+QPushButton[class="history-item"]:hover {
+    background-color: @bg_base;
+    border-color: @brand_500;
+}
+QPushButton[class="history-item"]:pressed {
+    background-color: @brand_500_a20;
 }
 /* Dashboard Card Header */
 
@@ -493,19 +881,83 @@ QLabel[class="insight-title"] {
 
 QLabel[class="info-card-value"],
 QLabel[class="kpi-value"] {
-    font-size: 22pt;
+    font-size: 20pt;
     font-weight: bold;
     border-bottom-left-radius: 12px;
     border-bottom-right-radius: 12px;
 }
 
+QFrame[class="trend-chip"] {
+    background-color: transparent;
+    border: none;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
+QFrame[class="trend-pill"] {
+    border-radius: 10px;
+    border: none;
+    background-color: @bg_base;
+}
+
+QFrame[class="trend-pill"][state="positive"] {
+    border: none;
+    background-color: @state_success_a10;
+}
+
+QFrame[class="trend-pill"][state="negative"] {
+    border: none;
+    background-color: @state_danger_a10;
+}
+
+QFrame[class="trend-pill"][state="neutral"] {
+    border: none;
+    background-color: @bg_base;
+}
+
+QLabel[class="trend-arrow"],
+QLabel[class="trend-delta"],
+QLabel[class="trend-pct"] {
+    background-color: transparent;
+    font-size: 10pt;
+    font-weight: 700;
+}
+
+QLabel[class="trend-arrow"] {
+    min-width: 12px;
+}
+
+QLabel[class="trend-caption"] {
+    background-color: transparent;
+    color: @text_secondary;
+    font-size: 8pt;
+    font-weight: 500;
+}
+
+QLabel[class="trend-arrow"][state="positive"],
+QLabel[class="trend-delta"][state="positive"],
+QLabel[class="trend-pct"][state="positive"] {
+    color: @state_success;
+}
+
+QLabel[class="trend-arrow"][state="negative"],
+QLabel[class="trend-delta"][state="negative"],
+QLabel[class="trend-pct"][state="negative"] {
+    color: @state_danger;
+}
+
+QLabel[class="trend-arrow"][state="neutral"],
+QLabel[class="trend-delta"][state="neutral"],
+QLabel[class="trend-pct"][state="neutral"] {
+    color: @text_secondary;
+}
 /* Dashboard Sections Headers */
 QLabel[class="section-title"] {
     background-color: @bg_surface;
     color: @state_success;
-    border: 2px solid @border;
-    border-radius: 8px;
-    font-size: 22pt;
+    border: 1px solid @border;
+    border-radius: 12px;
+    font-size: 14pt;
     font-weight: bold;
     margin: 0px;
 }
@@ -546,37 +998,48 @@ QTableWidget[class="insight-table"] QHeaderView::section {
 }
 
 
-/* Appointments table */
-#dashboard_upcoming_appointments_title{
+/* Appointments table and Remainders */
+QPushButton[action="view-all"] {
+    padding: 0px;
+}
+
+#dashboard_upcoming_appointments_card,
+#dashboard_remainders_card {
     background-color: @bg_surface;
-    border: 2px solid @border;
-    border-radius: 8px;
+    border: 1px solid @border;
+    border-radius: 12px;
     margin-top: 2px;
 }
 
-#dashboard_upcoming_appointments_table {
+#dashboard_upcoming_appointments_table,
+#dashboard_remainders_table {
     gridline-color: transparent;
     background-color: @bg_surface;
-    border: 2px solid @border;
+    border: none;
     border-radius: 8px;
     padding: 0px;
-    padding-bottom: 4px;
+    padding-bottom: 2px;
 }
 
-#dashboard_upcoming_appointments_table QHeaderView::section {
+#dashboard_upcoming_appointments_table QHeaderView::section,
+#dashboard_remainders_table QHeaderView::section {
     background-color: @border;
     border: none;
+    margin: 0px;
+    padding: 0px;
 }
 
-#dashboard_upcoming_appointments_table QHeaderView{
+#dashboard_upcoming_appointments_table QHeaderView,
+#dashboard_remainders_table QHeaderView {
     background-color: @border;
-    border-bottom: 2px solid @border;
+    border-bottom: 1px solid @border;
     padding: 2px;
+    margin: 0px;
 }
 
 /* Next Client Card Dashboard Elements */
 QLabel[class="status-title"] { color: @text_primary; font-weight: bold; }
-QLabel[class="status-value"] { color: @state_success; font-weight: bold; font-size: 13pt; }
+QLabel[class="status-value"] { color: @state_success; font-weight: bold; font-size: 14pt; }
 
 /* ============================================================================
     Charts & Cards Styling
@@ -603,14 +1066,270 @@ QPushButton[action="delete"] {
     font-weight: bold;
 }
 
-QFrame[class="timestamp-button-group"] {
+/* Visit Dialog: Section Headers */
+QLabel[class="dialog-section-title"] {
     background-color: transparent;
+    color: @brand_500;
+    font-size: 8pt;
+    font-weight: bold;
+    padding: 8px 0px 3px 0px;
+}
+
+/* Visit Dialog: Titled card that groups a block of fields on a step */
+QFrame[class="form-card"] {
+    background-color: @bg_surface;
+    border: 1px solid @border;
     border-radius: 8px;
-    margin-right: 6px;
+}
+QLabel[class="form-card-title"] {
+    background-color: transparent;
+    color: @brand_500;
+    font-size: 8pt;
+    font-weight: bold;
+}
+QLabel[class="form-card-hint"] {
+    background-color: transparent;
+    color: @text_secondary;
+    font-size: 8pt;
+}
+/* Visit Dialog: optional follow-up block inside the Visit Details card.
+   An opaque surface colour so it reads as a panel, not a hole into the page. */
+QGroupBox#followupGroup {
+    background-color: @bg_surface;
+    border: 1px solid @border;
+    border-radius: 6px;
+    margin-top: 10px;
+    padding-top: 4px;
+}
+QGroupBox#followupGroup::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    left: 10px;
+    padding: 0px 4px;
+    color: @text_secondary;
+}
+
+/* Visit Dialog: Clinical Exam step - the five clinical sections are accordion
+   cards. The group box renders untitled because ClinicalSectionHeader draws the
+   chevron + title + summary line in its place. */
+QGroupBox[class="clinical-card"] {
+    background-color: @bg_surface;
+    border: 1px solid @border;
+    border-radius: 8px;
+}
+QGroupBox[class="clinical-card"]:hover {
+    border-color: @brand_500;
+    background-color: @brand_500_a10;
+}
+QWidget[class="clinical-card-header"] {
+    background-color: transparent;
+}
+QWidget[class="clinical-card-content"] {
+    background-color: transparent;
+}
+/* Row containers inside the clinical cards - transparent so they show the
+   card's surface colour instead of the grey the global QWidget rule gives. */
+QWidget[class="record-row"] {
+    background-color: transparent;
+}
+QLabel[class="clinical-card-chevron"] {
+    background-color: transparent;
+    color: @brand_500;
+    font-size: 13pt;
+    font-weight: bold;
+}
+QLabel[class="clinical-card-title"] {
+    background-color: transparent;
+    color: @text_primary;
+    font-size: 9pt;
+    font-weight: bold;
+}
+QLabel[class="clinical-card-summary"] {
+    background-color: transparent;
+    color: @text_secondary;
+    font-size: 8pt;
+}
+/* One-line titled card (e.g. the consultation charge on the Clinical Exam
+   step) - same surface as the accordion cards, without an extra heading row. */
+QFrame[class="toggle-card"] {
+    background-color: @bg_surface;
+    border: 1px solid @border;
+    border-radius: 8px;
+}
+
+/* Visit Dialog: Wizard step indicator */
+QFrame#wizardStepper {
+    background-color: @bg_surface;
+    border: 1px solid @border;
+    border-radius: 8px;
+}
+/* The badge + title item inside the strip - transparent so it shows the strip's
+   surface colour instead of the grey the global QWidget rule would give it. */
+QWidget[class="wizard-step-item"] {
+    background-color: transparent;
+}
+QLabel[class="step-badge"] {
+    background-color: @bg_surface;
+    color: @text_secondary;
+    border: 1px solid @border;
+    border-radius: 9px;
+    font-size: 8pt;
+    font-weight: bold;
+    min-width: 18px;
+    max-width: 18px;
+    min-height: 18px;
+    max-height: 18px;
+}
+QLabel[class="step-badge"][state="active"] {
+    background-color: @brand_500;
+    color: #FFFFFF;
+    border: 1px solid @brand_500;
+}
+QLabel[class="step-badge"][state="done"] {
+    background-color: @brand_500_a15;
+    color: @brand_500;
+    border: 1px solid @brand_500_a35;
+}
+QLabel[class="step-title"] {
+    background-color: transparent;
+    color: @text_secondary;
+    font-size: 9pt;
+    font-weight: 600;
+    padding: 2px 0px;
+}
+QLabel[class="step-title"][state="active"] {
+    color: @brand_500;
+    font-weight: bold;
+}
+QLabel[class="step-title"][state="done"] {
+    color: @text_primary;
+}
+QLabel[class="step-arrow"] {
+    background-color: transparent;
+    color: @text_secondary;
+    font-size: 9pt;
+    padding: 2px 0px;
+}
+QLabel[class="step-counter"] {
+    background-color: transparent;
+    color: @text_secondary;
+    font-size: 8pt;
+    font-weight: bold;
+}
+
+/* Visit Dialog: hairline separating the step area from the footer actions */
+QFrame#dialogFooterDivider {
+    background-color: @border;
+    border: none;
+    min-height: 1px;
+    max-height: 1px;
+}
+
+/* Shared receipt card (src/modules/receipt_card.py) - Receipt Details, the Add Visit preview and any future receipt surface all read these classes */
+QFrame[class="receipt"] {
+    background-color: @bg_surface;
+    border: 1px solid @border;
+    border-radius: 6px;
+}
+QLabel[class="receipt-clinic"] {
+    background-color: transparent;
+    color: @brand_500;
+    font-size: 11pt;
+    font-weight: bold;
+}
+QLabel[class="receipt-logo"] {
+    background-color: transparent;
+}
+QLabel[class="receipt-title"] {
+    background-color: transparent;
+    color: @text_secondary;
+    font-size: 8pt;
+    font-weight: bold;
+}
+QLabel[class="receipt-meta-caption"] {
+    background-color: transparent;
+    color: @text_secondary;
+    font-weight: 600;
+}
+QLabel[class="receipt-meta-value"] {
+    background-color: transparent;
+    color: @text_primary;
+    font-weight: 600;
+}
+QLabel[class="receipt-total"] {
+    background-color: transparent;
+    color: @state_success;
+    font-size: 12pt;
+    font-weight: bold;
+}
+QLabel[class="receipt-footer"] {
+    background-color: transparent;
+    color: @text_secondary;
+}
+QTableWidget#receiptItems {
+    background-color: transparent;
+    border: none;
+}
+QTableWidget#receiptItems::item {
+    border: none;
+}
+QFrame[class="receipt"] QHeaderView::section {
+    background-color: transparent;
+    border: none;
+}
+
+/* Professional primary action button */
+QPushButton[class="primary-action"] {
+    background-color: @brand_500;
+    color: #FFFFFF;
+    border: none;
+    padding: 8px 22px;
+    font-weight: bold;
+}
+QPushButton[class="primary-action"]:hover {
+    background-color: @brand_500_hover;
+}
+QPushButton[class="primary-action"]:pressed {
+    background-color: @brand_500_pressed;
+}
+QPushButton[class="primary-action"]:disabled {
+    background-color: @border;
+    color: @text_secondary;
+}
+
+/* Secondary action: outlined, used for print/export so one primary action
+   per screen is preserved (e.g. the receipt toolbar beside "Save Visit"). */
+QPushButton[class="secondary-action"] {
+    background-color: @bg_surface;
+    color: @text_primary;
+    border: 1px solid @border;
+    border-radius: 6px;
+    padding: 6px 16px;
+    font-weight: 600;
+}
+QPushButton[class="secondary-action"]:hover {
+    background-color: @brand_500_a10;
+    border: 1px solid @brand_500;
+    color: @brand_500;
+}
+QPushButton[class="secondary-action"]:pressed {
+    background-color: @brand_500_a20;
+}
+QPushButton[class="secondary-action"]:disabled {
+    color: @text_secondary;
+    border: 1px solid @border;
+}
+
+QWidget[class="timestamp-button-group"] {
+    background-color: @bg_surface;
+}
+
+QFrame[class="timestamp-button-group"] {
+    background-color: @bg_surface;
 }
 
 QPushButton[class="timestamp-button-group"] {
-    background-color: transparent;
+    background-color: @bg_surface;
     color: @text_secondary;
     border-radius: 4px;
     font-weight: bold;
@@ -624,15 +1343,271 @@ QPushButton[class="timestamp-button-group"]:checked {
 }
 
 QLabel[name="total-price"]{
-    font-size: 14px; 
+    font-size: 9pt; 
     color: @state_success; 
     margin-left: 10px;
 }
 
+/* ============================================================================
+    Import Data - Starter Templates (Settings -> Database Backup)
+    ============================================================================ */
+
+QFrame#importTemplatesDivider {
+    background-color: @border;
+    min-height: 1px;
+    max-height: 1px;
+    border: none;
+}
+
+QLabel[class="template-hint"] {
+    background-color: transparent;
+    color: @text_secondary;
+    font-size: 9pt;
+}
+
+QLabel[class="settings-hint"] {
+    background-color: transparent;
+    color: @text_secondary;
+    font-size: 9pt;
+    padding-top: 2px;
+}
+
+QPushButton[class="template-action"] {
+    background-color: @bg_surface;
+    color: @text_primary;
+    border: 1px solid @border;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-weight: 600;
+}
+
+QPushButton[class="template-action"]:hover {
+    background-color: @brand_500_a10;
+    border: 1px solid @brand_500;
+    color: @brand_500;
+}
+
+QPushButton[class="template-action"]:pressed {
+    background-color: @brand_500_a20;
+}
+
+QPushButton[class="template-action"]:disabled {
+    background-color: @bg_surface;
+    color: @text_secondary;
+    border: 1px solid @border;
+}
+
+/* ============================================================================
+    Settings -> Database Backup tab - card groups and page header
+    ============================================================================ */
+
+QLabel[class="page-title"] {
+    background-color: transparent;
+    color: @text_primary;
+    font-size: 14pt;
+    font-weight: bold;
+}
+
+/* First-run onboarding dialog: branded banner above a form card. */
+QFrame[class="first-run-banner"] {
+    background-color: @brand_500;
+    border: none;
+    border-radius: 0px;
+}
+QLabel[class="first-run-logo"] {
+    background-color: transparent;
+}
+QLabel[class="first-run-title"] {
+    background-color: transparent;
+    color: #FFFFFF;
+    font-size: 20pt;
+    font-weight: bold;
+}
+QLabel[class="first-run-subtitle"] {
+    background-color: transparent;
+    color: rgba(255, 255, 255, 0.90);
+    font-size: 10pt;
+}
+
+QGroupBox[class="backup-card"] {
+    background-color: @bg_surface;
+    border: 1px solid @border;
+    border-radius: 12px;
+    margin-top: 16px;
+    padding: 16px 16px 10px 16px;
+    font-size: 9pt;
+}
+
+QGroupBox[class="backup-card"]::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    left: 12px;
+    padding: 0px 6px;
+    color: @brand_500;
+    font-size: 10pt;
+    font-weight: bold;
+    background-color: @bg_surface;
+}
+
+QGroupBox[class="backup-card"]:disabled {
+    background-color: @bg_base;
+    border: 1px solid @border;
+}
+
+QGroupBox[class="backup-card"]:disabled::title {
+    color: @text_secondary;
+}
+
+QLabel[class="backup-status"] {
+    background-color: transparent;
+    color: @state_success;
+    font-size: 9pt;
+    font-weight: 600;
+}
+
+QLabel[class="experimental-banner"] {
+    background-color: @state_warning_a10;
+    color: @state_warning;
+    border: 1px solid @state_warning;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 9pt;
+    font-weight: 600;
+}
+
 #copyright_label {
     color: @text_secondary;
-    font-size: 11px;
+    font-size: 9pt;
     margin-top: 15px;
+}
+
+/* ============================================================================
+    Shared Typographic Utilities
+   Consistent headings, subtitles, captions and muted text reused across
+   dialogs, cards and pages. Palette-driven so they follow light/dark themes.
+   ============================================================================ */
+
+/* Dialog / page heading (matches the reports + settings page title scale) */
+QLabel[class="dialog-title"] {
+    background-color: transparent;
+    color: @text_primary;
+    font-size: 14pt;
+    font-weight: bold;
+}
+
+/* Secondary heading for a card or the right-hand pane of a split dialog */
+QLabel[class="section-heading"] {
+    background-color: transparent;
+    color: @text_primary;
+    font-size: 10pt;
+    font-weight: bold;
+}
+
+/* Short explanatory line right below a heading */
+QLabel[class="dialog-subtitle"] {
+    background-color: transparent;
+    color: @text_secondary;
+    font-size: 10pt;
+}
+
+/* Helper / hint text */
+QLabel[class="dialog-hint"] {
+    background-color: transparent;
+    color: @text_secondary;
+    font-size: 9pt;
+}
+
+/* Muted body text (detail rows, meta labels) */
+QLabel[class="muted-label"] {
+    background-color: transparent;
+    color: @text_secondary;
+    font-size: 9pt;
+}
+
+/* Very small caption above a value */
+QLabel[class="caption-label"] {
+    background-color: transparent;
+    color: @text_secondary;
+    font-size: 8pt;
+}
+
+/* Italic placeholder shown when a list/table has no rows */
+QLabel[class="empty-label"] {
+    background-color: transparent;
+    color: @text_secondary;
+    font-size: 9pt;
+    font-style: italic;
+}
+
+/* Bold primary text that should keep its inherited size */
+QLabel[class="value-strong"] {
+    background-color: transparent;
+    color: @text_primary;
+    font-weight: bold;
+}
+
+/* Dense list row title (permission rows etc.) */
+QLabel[class="row-title"] {
+    background-color: transparent;
+    color: @text_primary;
+    font-size: 9pt;
+    font-weight: bold;
+}
+
+/* Name beside an avatar / identity block */
+QLabel[class="avatar-name"] {
+    background-color: transparent;
+    color: @text_primary;
+    font-size: 11pt;
+    font-weight: bold;
+}
+
+/* Rich-text info block with a themed link colour */
+QLabel[class="info-text"] {
+    background-color: transparent;
+    color: @text_secondary;
+    font-size: 9pt;
+}
+QLabel[class="info-text"] a { color: @brand_500; }
+
+/* Logo preview swatch in Settings */
+QLabel[class="logo-preview"] {
+    border: 1px solid @border;
+    border-radius: 6px;
+    background-color: @bg_base;
+}
+
+/* Emphasised money figure in a positive/success state */
+QLabel[class="success-value"] {
+    background-color: transparent;
+    color: @state_success;
+    font-size: 12pt;
+    font-weight: bold;
+}
+
+/* Centered placeholder shown on an empty page */
+QLabel[class="placeholder-label"] {
+    background-color: transparent;
+    color: @text_secondary;
+    font-size: 12pt;
+}
+
+/* Collapsible section header used by the RBAC permission groups */
+QToolButton[class="section-toggle"] {
+    background-color: transparent;
+    color: @text_primary;
+    font-size: 9pt;
+    font-weight: bold;
+    border: none;
+    border-bottom: 1px solid @border;
+    padding: 6px 2px;
+    text-align: left;
+}
+
+/* Smaller inline action button (e.g. "+ Add Follow-up" inside a card) */
+QPushButton[class="compact-button"] {
+    font-size: 8pt;
+    padding: 4px 10px;
 }
 
 /* ============================================================================
